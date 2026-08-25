@@ -4345,7 +4345,7 @@ window.addEventListener('load', () => {
             });
         }
 
-function switchView(showId) {
+function switchView(showId, pushToHistory = true) {
     // إضافة نظام حماية الخروج من الامتحان
     if (typeof examState !== 'undefined' && examState.inProgress && showId !== 'active-quiz-view') {
         Swal.fire({
@@ -4361,9 +4361,17 @@ function switchView(showId) {
         }).then((result) => {
             if (result.isConfirmed) {
                 submitExam(true); // تسليم إجباري بصفر
+            } else {
+                // لو رجعنا من زرار الباك وكنسلنا الخروج، نرجع الهيستوري لصفحة الامتحان تاني
+                if (!pushToHistory) history.pushState({ view: 'active-quiz-view' }, "", "#active-quiz-view");
             }
         });
         return; // إيقاف الانتقال لصفحة أخرى
+    }
+
+    // تفعيل نظام الهيستوري عشان أزرار الموبايل والمتصفح
+    if (pushToHistory) {
+        history.pushState({ view: showId }, "", "#" + showId);
     }
 
     // إخفاء كل الشاشات
@@ -4415,6 +4423,21 @@ function switchView(showId) {
         document.title = seoTitles[showId];
     }
 }
+
+// دالة التنبيه لزرار المتصفح (عشان نلقط لما اليوزر يدوس رجوع ونجيبله الصفحة اللي كان فيها)
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.view) {
+        switchView(event.state.view, false); // false هنا معناها متضيفش السجل ده تاني في الهيستوري
+    } else {
+        switchView('main-view', false); // لو مفيش سجل، نرجعه للرئيسية
+    }
+});
+
+// تعيين أول صفحة في الهيستوري لما الموقع يفتح
+if (!history.state) {
+    history.replaceState({ view: 'main-view' }, "", "#main-view");
+}
+
         function showDepartmentsPage() { switchView('departments-view'); }
         function showSpecializedProgramsPage() { switchView('specialized-programs-view'); }
         function showCareerPage() { switchView('career-view'); }
