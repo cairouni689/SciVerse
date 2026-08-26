@@ -150,7 +150,7 @@
         .purple-glow-box {
             animation: purplePulse 3s infinite;
             border: 1px solid rgba(109, 40, 217, 0.5);
-            will-change: box-shadow;
+            transform: translateZ(0);
         }
 
         @keyframes greenPulse {
@@ -161,11 +161,6 @@
         .green-glow-box {
             animation: greenPulse 3s infinite;
             border: 1px solid rgba(74, 222, 128, 0.4);
-            will-change: box-shadow;
-        }
-        /* Pulse Animation Fix for Scroll */
-        .animate-pulse-slow {
-            will-change: opacity;
             transform: translateZ(0);
         }
 
@@ -204,7 +199,6 @@
                         background 0.4s ease,
                         box-shadow 0.4s ease,
                         border-color 0.4s ease;
-            will-change: transform, box-shadow;
             transform: translateZ(0);
         }
         .group:hover .pro-icon-container {
