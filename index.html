@@ -4369,10 +4369,15 @@ function switchView(showId, pushToHistory = true) {
         return; // إيقاف الانتقال لصفحة أخرى
     }
 
-    // تفعيل نظام الهيستوري عشان أزرار الموبايل والمتصفح
-    if (pushToHistory) {
-        history.pushState({ view: showId }, "", "#" + showId);
-    }
+            // تفعيل نظام الهيستوري عشان أزرار الموبايل والمتصفح
+        if (pushToHistory) {
+            history.pushState({ view: showId }, "", "#" + showId);
+        }
+        
+        // حفظ الصفحة الحالية في الذاكرة لاسترجاعها عند عمل ريفريش
+        if (showId !== 'active-quiz-view') {
+            localStorage.setItem('currentView', showId);
+        }
 
     // إخفاء كل الشاشات
     ALL_VIEWS.forEach(id => {
@@ -4465,8 +4470,9 @@ function showAiPage() {
             lastSelectedYear = 'الفرقة الأولى';
             switchView('year1-view');
         }
- function showDeptSelection(yearName) {
+  function showDeptSelection(yearName) {
             lastSelectedYear = yearName;
+            localStorage.setItem('lastSelectedYear', yearName);
             const titleEl = document.getElementById('dept-select-title');
             if (titleEl) titleEl.innerText = yearName + " - اختيار القسم";
             
@@ -4478,9 +4484,10 @@ function showAiPage() {
             switchView('dept-selection-view');
         }
 
-    // تعديل دالة عرض الفصول للأقسام العامة (إصلاح مشكلة التداخل)
+        // تعديل دالة عرض الفصول للأقسام العامة (إصلاح مشكلة التداخل)
         function showSpecializedSemesters(deptName) {
             lastSelectedDept = deptName;
+            localStorage.setItem('lastSelectedDept', deptName);
             const titleEl = document.getElementById('specialized-title');
             if (titleEl) titleEl.innerText = deptName;
 
@@ -4503,6 +4510,9 @@ function showAiPage() {
             switchView('specialized-semesters-view');
         }
 async function showDepartmentSemester(year, dept, semester) {
+    localStorage.setItem('lastSelectedYear', year);
+    localStorage.setItem('lastSelectedDept', dept);
+    localStorage.setItem('lastSelectedSemester', semester);
     const titleEl = document.getElementById('department-subjects-title');
     const subtitleEl = document.getElementById('department-subjects-subtitle');
     const container = document.getElementById('department-subjects-container');
@@ -4588,6 +4598,8 @@ async function showDepartmentSemester(year, dept, semester) {
 
 async function showSubjectsPage(term) {
     lastSelectedSubjectCategory = term;
+    localStorage.setItem('lastSelectedYear', lastSelectedYear);
+    localStorage.setItem('lastSelectedSubjectCategory', term);
     const container = document.getElementById('subjects-container');
     const titleEl = document.getElementById('subjects-page-title');
     
@@ -4656,6 +4668,9 @@ async function showSubjectsPage(term) {
     switchView('subjects-view');
 }
 function showSemesterPage(title, link, hasLink) {
+            localStorage.setItem('semesterTitle', title);
+            localStorage.setItem('semesterLink', link);
+            localStorage.setItem('semesterHasLink', hasLink);
             const titleEl = document.getElementById('semester-title');
             const messageEl = document.getElementById('semester-message');
             const linkEl = document.getElementById('semester-drive-link');
@@ -4859,9 +4874,30 @@ window.addEventListener('load', async () => {
     // 6. جلب الأخبار من الداتا بيز
     if (typeof updateNewsTicker === 'function') updateNewsTicker();
 
-    // 7. تشغيل التحديث اللحظي
-    if (typeof setupRealtimeListener === 'function') setupRealtimeListener();
-});
+            // 7. تشغيل التحديث اللحظي
+        if (typeof setupRealtimeListener === 'function') setupRealtimeListener();
+
+        // 8. استرجاع الصفحة الحالية بعد الريفريش
+        const savedView = localStorage.getItem('currentView');
+        if (savedView && savedView !== 'main-view' && savedView !== 'active-quiz-view') {
+            if (savedView === 'subjects-view' && localStorage.getItem('lastSelectedSubjectCategory')) {
+                showSubjectsPage(localStorage.getItem('lastSelectedSubjectCategory'));
+            } else if (savedView === 'department-subjects-view' && localStorage.getItem('lastSelectedDept')) {
+                showDepartmentSemester(localStorage.getItem('lastSelectedYear'), localStorage.getItem('lastSelectedDept'), localStorage.getItem('lastSelectedSemester'));
+            } else if (savedView === 'specialized-semesters-view' && localStorage.getItem('lastSelectedDept')) {
+                const dept = localStorage.getItem('lastSelectedDept');
+                if (typeof specializedPrograms !== 'undefined' && specializedPrograms.includes(dept)) {
+                    showSpecializedProgramSemesters(dept);
+                } else {
+                    showSpecializedSemesters(dept);
+                }
+            } else if (savedView === 'semester-view' && localStorage.getItem('semesterTitle')) {
+                showSemesterPage(localStorage.getItem('semesterTitle'), localStorage.getItem('semesterLink'), localStorage.getItem('semesterHasLink') === 'true');
+            } else {
+                switchView(savedView, false);
+            }
+        }
+    });
 // ==========================================
         // بداية دوال البرامج النوعية الجديدة
         // ==========================================
@@ -4872,8 +4908,9 @@ window.addEventListener('load', async () => {
         }
 
      // 2. الوظيفة اللي بتفتح صفحة الأقسام بعد ما تختار السنة (مستوى 1، 2، 3...)
-        function showSpecializedProgramsList(yearLevel) {
+                function showSpecializedProgramsList(yearLevel) {
             lastSelectedYear = yearLevel; 
+            localStorage.setItem('lastSelectedYear', yearLevel);
             
             const titleEl = document.getElementById('dept-select-title');
             if (titleEl) titleEl.innerText = `${yearLevel} - البرامج النوعية`;
@@ -4921,8 +4958,9 @@ window.addEventListener('load', async () => {
         }
 
         // 4. الوظيفة اللي بتفتح صفحة الترمات (ترم أول / ترم تاني) للبرامج النوعية
-        function showSpecializedProgramSemesters(programName) {
+                function showSpecializedProgramSemesters(programName) {
             lastSelectedDept = programName;
+            localStorage.setItem('lastSelectedDept', programName);
             
             // بنكتب اسم البرنامج اللي اخترته فوق كعنوان
             const titleEl = document.getElementById('specialized-title');
@@ -5818,6 +5856,7 @@ document.addEventListener('keydown', function(event) {
         return false;
     }
 });
+
     </script>
 </body>
 </html>
