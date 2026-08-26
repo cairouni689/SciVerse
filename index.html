@@ -4235,10 +4235,22 @@ async function fetchUserResults() {
             }
         };
 
-        let lastSelectedYear = "";
-        let lastSelectedDept = "";
-        let lastSelectedSubjectCategory = "";
+        let _lastSelectedYear = sessionStorage.getItem("lastSelectedYear") || "";
+        let _lastSelectedDept = sessionStorage.getItem("lastSelectedDept") || "";
+        let _lastSelectedSubjectCategory = sessionStorage.getItem("lastSelectedSubjectCategory") || "";
 
+        Object.defineProperty(window, 'lastSelectedYear', {
+            get: () => _lastSelectedYear,
+            set: (val) => { _lastSelectedYear = val; sessionStorage.setItem("lastSelectedYear", val); }
+        });
+        Object.defineProperty(window, 'lastSelectedDept', {
+            get: () => _lastSelectedDept,
+            set: (val) => { _lastSelectedDept = val; sessionStorage.setItem("lastSelectedDept", val); }
+        });
+        Object.defineProperty(window, 'lastSelectedSubjectCategory', {
+            get: () => _lastSelectedSubjectCategory,
+            set: (val) => { _lastSelectedSubjectCategory = val; sessionStorage.setItem("lastSelectedSubjectCategory", val); }
+        });
 const ALL_VIEWS = [
     'main-view',
     'profile-view',
@@ -4433,9 +4445,47 @@ window.addEventListener('popstate', function(event) {
     }
 });
 
-// تعيين أول صفحة في الهيستوري لما الموقع يفتح
-if (!history.state) {
+// تعيين أول صفحة في الهيستوري واسترجاع الصفحة بعد الريفريش
+let currentHash = window.location.hash.substring(1);
+if (currentHash && ALL_VIEWS.includes(currentHash)) {
+    history.replaceState({ view: currentHash }, "", "#" + currentHash);
+    
+    // استرجاع البيانات لتجنب الشاشات الفارغة
+    if (currentHash === 'subjects-view' && window.lastSelectedSubjectCategory) {
+        showSubjectsPage(window.lastSelectedSubjectCategory);
+    } else if (currentHash === 'dept-selection-view' && window.lastSelectedYear) {
+        if (window.lastSelectedYear.includes('المستوى')) {
+            showSpecializedProgramsList(window.lastSelectedYear);
+        } else {
+            showDeptSelection(window.lastSelectedYear);
+        }
+    } else if (currentHash === 'specialized-semesters-view' && window.lastSelectedDept) {
+        if (typeof specializedPrograms !== 'undefined' && specializedPrograms.includes(window.lastSelectedDept)) {
+            showSpecializedProgramSemesters(window.lastSelectedDept);
+        } else {
+            showSpecializedSemesters(window.lastSelectedDept);
+        }
+    } else if (currentHash === 'department-subjects-view' || currentHash === 'semester-view') {
+        // للرجوع الآمن خطوة للخلف لتجنب الشاشات الفارغة
+        if (window.lastSelectedDept) {
+            if (typeof specializedPrograms !== 'undefined' && specializedPrograms.includes(window.lastSelectedDept)) {
+                showSpecializedProgramSemesters(window.lastSelectedDept);
+            } else {
+                showSpecializedSemesters(window.lastSelectedDept);
+            }
+        } else {
+            switchView('main-view', false);
+        }
+    } else if (currentHash === 'active-quiz-view') {
+        // حماية الامتحان: لو عمل ريفريش أثناء الامتحان مش بنرجعه للسؤال، دالة الحماية هتسحب الورقة
+        switchView('main-view', false);
+    } else {
+        // الصفحات العادية (تاريخ، أدوات، إلخ)
+        switchView(currentHash, false);
+    }
+} else {
     history.replaceState({ view: 'main-view' }, "", "#main-view");
+    switchView('main-view', false); // إظهار الرئيسية بشكل افتراضي لو مفيش هاش
 }
 
         function showDepartmentsPage() { switchView('departments-view'); }
