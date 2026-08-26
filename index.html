@@ -2266,10 +2266,22 @@ async function checkUserSession() {
     const { data: { session } } = await sb.auth.getSession();
     handleUserUI(session);
 
-    sb.auth.onAuthStateChange((_event, session) => {
+    sb.auth.onAuthStateChange((event, session) => {
         handleUserUI(session);
+        
+        if (event === 'SIGNED_IN') {
+            const returnHash = localStorage.getItem('return_hash');
+            if (returnHash) {
+                localStorage.removeItem('return_hash');
+                const viewId = returnHash.substring(1);
+                if (ALL_VIEWS.includes(viewId)) {
+                    switchView(viewId, false);
+                }
+            }
+        }
     });
 }
+
 
 // 4. تحديث الواجهة (إظهار/إخفاء الأزرار)
 function handleUserUI(session) {
@@ -2320,9 +2332,10 @@ function handleUserUI(session) {
 
 // 5. دوال تسجيل الدخول والخروج
 async function signInWithGoogle() {
+    localStorage.setItem('return_hash', window.location.hash);
     await sb.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.href }
+        options: { redirectTo: window.location.origin + window.location.pathname }
     });
 }
 
