@@ -429,6 +429,34 @@
             border-radius: 50%;
             will-change: transform, opacity;
         }
+
+        /* Floating Score Indicator */
+        @keyframes floatScoreUp {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(0.85);
+            }
+            40% {
+                opacity: 1;
+                transform: translate3d(0, -25px, 0) scale(1.35);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(0, -60px, 0) scale(1.1);
+            }
+        }
+        .pop-score-float {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 900;
+            font-size: 1.35rem;
+            color: #4ade80;
+            text-shadow: 0 0 12px rgba(34, 197, 94, 0.9), 0 2px 5px rgba(0,0,0,0.9);
+            animation: floatScoreUp 0.75s ease-out forwards;
+            font-family: sans-serif;
+            user-select: none;
+        }
     </style>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -580,13 +608,75 @@
     </div>
 </div>
 
+<!-- Balloons Game Score HUD (Visible while popping balloons) -->
+<div id="balloons-game-hud" class="fixed top-5 left-1/2 -translate-x-1/2 z-[95] pointer-events-none transition-all duration-300 opacity-0 -translate-y-4">
+    <div class="bg-dark-900/90 border-2 border-cuGreen-500/60 shadow-[0_0_30px_rgba(34,197,94,0.4)] backdrop-blur-md px-5 py-2 rounded-full flex items-center gap-3 text-xs md:text-sm font-bold text-white">
+        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-cuGreen-500/20 text-cuGreen-400 animate-pulse">🎯</span>
+        <span>فرقعت: <strong id="game-popped-count" class="text-cuGreen-400 font-extrabold text-base transition-transform inline-block">0</strong> من <strong id="game-total-count" class="text-cuGold-400 font-extrabold text-base">0</strong></span>
+        <div class="w-14 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+            <div id="game-time-progress" class="h-full bg-gradient-to-r from-cuGreen-400 to-cuGold-400 transition-all duration-300 w-full"></div>
+        </div>
+    </div>
+</div>
+
 <!-- Floating Balloons Container -->
 <div id="celebration-balloons-container"></div>
 
-<!-- Balloons Replay Button (Bottom Left) -->
-<button id="toggle-balloons-btn" onclick="launchBalloonsBurst(true)" title="إطلاق البلالين الاحتفالية" class="fixed bottom-6 left-6 z-40 bg-dark-900/90 hover:bg-dark-800 text-cuGreen-400 border border-cuGreen-500/50 backdrop-blur-md px-3 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
-    <span class="text-base" id="balloons-toggle-icon">🎈</span>
-    <span id="balloons-toggle-text" class="hidden sm:inline">أطلق البلالين</span>
+<!-- Balloons Game Score Results Modal -->
+<div id="balloons-score-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[130] hidden opacity-0 flex items-center justify-center p-4 transition-all duration-300">
+    <div id="balloons-score-card" class="bg-dark-900/95 border-2 border-cuGreen-500/60 p-6 md:p-8 rounded-3xl shadow-[0_0_60px_rgba(34,197,94,0.35)] max-w-sm w-full relative text-center backdrop-blur-2xl transform scale-95 transition-all duration-300 overflow-hidden">
+        
+        <!-- Ambient Glow -->
+        <div class="absolute -top-16 -right-16 w-32 h-32 bg-cuGreen-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-cuGold-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Close Button (X) -->
+        <button onclick="closeBalloonsScoreModal()" class="absolute top-4 left-4 text-gray-400 hover:text-white bg-dark-800 hover:bg-red-500/20 p-2 rounded-full h-8 w-8 flex items-center justify-center transition-all border border-gray-700/60 hover:border-red-500/40 cursor-pointer" title="إغلاق">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+
+        <!-- Trophy Icon -->
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-cuGold-500/20 to-cuGreen-500/20 border border-cuGold-400/50 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(234,179,8,0.3)] mb-2.5 animate-bounce">
+            🏆
+        </div>
+
+        <!-- Title -->
+        <h3 class="text-xl font-bold text-white mb-1">
+            نتيجة تحدي العباقرة! 🎯
+        </h3>
+        <p class="text-xs text-gray-400 mb-4">احتفالية الـ 20K متابع - Cairo SciVerse</p>
+
+        <!-- Big Score Box -->
+        <div class="bg-dark-800/80 border border-cuGreen-500/30 rounded-2xl p-4 mb-3.5 shadow-inner">
+            <div class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cuGreen-400 via-emerald-300 to-cuGold-400 font-sans tracking-wide">
+                <span id="final-popped-count">0</span> / <span id="final-total-count">0</span>
+            </div>
+            <div class="text-xs font-semibold text-gray-300 mt-1">بلونة فرقعتها بنجاح! 🎈</div>
+        </div>
+
+        <!-- Dynamic Title / Feedback -->
+        <div id="game-rank-badge" class="mb-5 p-2.5 rounded-xl bg-cuGreen-500/10 border border-cuGreen-500/30 text-xs md:text-sm font-bold text-cuGreen-300 leading-snug">
+            عاش يا عبقري! رد فعلك أسطوري ⚡
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2.5">
+            <button onclick="playAgainBalloonGame()" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-cuGreen-600 to-cuGreen-500 hover:from-cuGreen-500 hover:to-cuGreen-400 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-lg hover:scale-105 active:scale-95 cursor-pointer">
+                <i class="fas fa-redo-alt text-xs"></i>
+                <span>العب تاني 🔄</span>
+            </button>
+            <button onclick="closeBalloonsScoreModal()" class="py-2.5 px-4 rounded-xl bg-dark-800 hover:bg-dark-700 text-gray-300 hover:text-white font-bold text-xs transition border border-gray-700/60 cursor-pointer">
+                <span>تمام 👍</span>
+            </button>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Balloons Game Start / Replay Button (Bottom Left) -->
+<button id="toggle-balloons-btn" onclick="launchBalloonsBurst(true)" title="تحدي فرقعة البلالين الاحتفالية" class="fixed bottom-6 left-6 z-40 bg-dark-900/90 hover:bg-dark-800 text-cuGreen-400 border border-cuGreen-500/50 backdrop-blur-md px-3 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+    <span class="text-base" id="balloons-toggle-icon">🎯</span>
+    <span id="balloons-toggle-text" class="hidden sm:inline">تحدي البلالين</span>
 </button>
 
 <!-- Celebration Top Announcement Banner (20K Milestone) with Green/Black Animated Moving Squares -->
@@ -6371,10 +6461,69 @@ document.addEventListener('keydown', function(event) {
     }
 
     // ----------------------------------------------------------------------
-    // D. البلالين الاحتفالية الطافية فوق الموقع لمدة 5 ثوانٍ
+    // D. لعبة تحدي فرقعة البلالين والاسكور (Balloons Pop Challenge Game)
     // ----------------------------------------------------------------------
     let balloonSpawnInterval = null;
     let balloonTimeout = null;
+    let gameEndTimeout = null;
+    let totalBalloonsSpawned = 0;
+    let totalBalloonsPopped = 0;
+    let isGameRoundActive = false;
+
+    // توليد صوت فرقعة تفاعلي بدون أي ملفات خارجية (Web Audio API)
+    function playPopSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(420 + Math.random() * 180, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.08);
+        } catch(e) {}
+    }
+
+    // صوت رنة الفوز الاحتفالية (Victory Chime)
+    function playWinChime() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const startTime = ctx.currentTime + i * 0.1;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.18, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.35);
+            });
+        } catch(e) {}
+    }
+
+    // إظهار رقم +1 طافي في مكان الفرقعة
+    function showFloatingPopScore(x, y) {
+        const floatEl = document.createElement('div');
+        floatEl.className = 'pop-score-float';
+        floatEl.textContent = '+1 🎈';
+        floatEl.style.left = `${x}px`;
+        floatEl.style.top = `${y}px`;
+        document.body.appendChild(floatEl);
+        setTimeout(() => {
+            if (floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
+        }, 750);
+    }
 
     const balloonThemes = [
         {
@@ -6413,6 +6562,10 @@ document.addEventListener('keydown', function(event) {
         const container = document.getElementById('celebration-balloons-container');
         if (!container) return;
 
+        totalBalloonsSpawned++;
+        const totalCountEl = document.getElementById('game-total-count');
+        if (totalCountEl) totalCountEl.textContent = totalBalloonsSpawned;
+
         // توليد البالون بحجم وحركة سريعة وديناميكية لتجري فوق شاشة الموقع
         const theme = balloonThemes[Math.floor(Math.random() * balloonThemes.length)];
         const size = Math.floor(Math.random() * 24) + 48; // 48px to 72px
@@ -6442,7 +6595,7 @@ document.addEventListener('keydown', function(event) {
             </div>
         `;
 
-        // تفاعل النقر لفرقعة البالون
+        // تفاعل النقر لفرقعة البالون واحتساب النقاط
         balloonEl.addEventListener('click', function(e) {
             e.stopPropagation();
             popBalloon(balloonEl, e.clientX, e.clientY, theme.border);
@@ -6459,8 +6612,24 @@ document.addEventListener('keydown', function(event) {
     }
 
     function popBalloon(balloonEl, clickX, clickY, color) {
+        if (balloonEl.classList.contains('balloon-popped')) return;
         balloonEl.classList.add('balloon-popped');
-        triggerCelebrationConfetti(clickX, clickY, 16, color);
+
+        // تحديث نقاط اللعبة
+        totalBalloonsPopped++;
+        const poppedCountEl = document.getElementById('game-popped-count');
+        if (poppedCountEl) {
+            poppedCountEl.textContent = totalBalloonsPopped;
+            poppedCountEl.style.transform = 'scale(1.35)';
+            setTimeout(() => {
+                if (poppedCountEl) poppedCountEl.style.transform = 'scale(1)';
+            }, 180);
+        }
+
+        playPopSound();
+        showFloatingPopScore(clickX, clickY);
+        triggerCelebrationConfetti(clickX, clickY, 18, color);
+
         setTimeout(() => {
             if (balloonEl.parentNode) {
                 balloonEl.parentNode.removeChild(balloonEl);
@@ -6468,31 +6637,130 @@ document.addEventListener('keydown', function(event) {
         }, 220);
     }
 
-    // إطلاق البلالين لتجري فوق الموقع لمدة 5 ثوانٍ
+    // إظهار بطاقة النتيجة النهائية للتحدي
+    function showBalloonsScoreModal(popped, total) {
+        const modal = document.getElementById('balloons-score-modal');
+        const card = document.getElementById('balloons-score-card');
+        const poppedEl = document.getElementById('final-popped-count');
+        const totalEl = document.getElementById('final-total-count');
+        const badgeEl = document.getElementById('game-rank-badge');
+        if (!modal || !card) return;
+
+        if (poppedEl) poppedEl.textContent = popped;
+        if (totalEl) totalEl.textContent = total;
+
+        const pct = total > 0 ? (popped / total) * 100 : 0;
+        if (badgeEl) {
+            if (popped === total && total > 0) {
+                badgeEl.innerHTML = '👑 <strong class="text-cuGold-400">أسطورة السرعة والتركيز!</strong> فرقعت كل البلالين بنسبة 100%! قنّاص معتمد لـ Cairo SciVerse ⚡';
+            } else if (pct >= 70) {
+                badgeEl.innerHTML = '🔥 <strong class="text-cuGreen-400">رد فعل خارق وسريع جداً!</strong> عاش يا عبقري فرقعت معظم البلالين 🎈';
+            } else if (pct >= 40) {
+                badgeEl.innerHTML = '🎯 <strong class="text-blue-400">أداء بطل ومحاولة ممتازة!</strong> تقدر تجيب سكور أعلى في الجولة الجاية 🚀';
+            } else if (popped > 0) {
+                badgeEl.innerHTML = '🎈 <strong class="text-cuGold-400">عاش على المحاولة!</strong> العب تاني واكسر رقمك القياسي 💪';
+            } else {
+                badgeEl.innerHTML = '😄 <strong class="text-gray-300">فاتتك البلالين ومفرقعتش!</strong> دوس "العب تاني" وفرقعهم بسرعة 🎯';
+            }
+        }
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.remove('opacity-0');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        });
+
+        playWinChime();
+        triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.45, 55);
+    }
+
+    window.closeBalloonsScoreModal = function() {
+        const modal = document.getElementById('balloons-score-modal');
+        const card = document.getElementById('balloons-score-card');
+        if (!modal) return;
+        if (card) {
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+        modal.classList.add('opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 320);
+    };
+
+    window.playAgainBalloonGame = function() {
+        closeBalloonsScoreModal();
+        setTimeout(() => {
+            launchBalloonsBurst(true);
+        }, 350);
+    };
+
+    // إطلاق البلالين وبدء جولة التحدي لمدة 5.5 ثوانٍ
     window.launchBalloonsBurst = function(manual = false) {
         if (balloonSpawnInterval) clearInterval(balloonSpawnInterval);
         if (balloonTimeout) clearTimeout(balloonTimeout);
+        if (gameEndTimeout) clearTimeout(gameEndTimeout);
 
+        // تصفير سكور الجولة
+        totalBalloonsSpawned = 0;
+        totalBalloonsPopped = 0;
+        isGameRoundActive = true;
+
+        // إظهار شريط السكور (HUD)
+        const hud = document.getElementById('balloons-game-hud');
+        const poppedCountEl = document.getElementById('game-popped-count');
+        const totalCountEl = document.getElementById('game-total-count');
+        const progressBar = document.getElementById('game-time-progress');
         const btnText = document.getElementById('balloons-toggle-text');
-        if (btnText) btnText.textContent = 'جاري الاحتفال 🎉';
 
-        // إطلاق دفعة فورية من البلالين
-        for (let i = 0; i < 5; i++) {
+        if (poppedCountEl) poppedCountEl.textContent = '0';
+        if (totalCountEl) totalCountEl.textContent = '0';
+        if (btnText) btnText.textContent = 'فرقع البلالين! 🎯';
+
+        if (hud) {
+            hud.classList.remove('opacity-0', '-translate-y-4');
+            hud.classList.add('opacity-100', 'translate-y-0');
+        }
+
+        if (progressBar) {
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '100%';
+            requestAnimationFrame(() => {
+                progressBar.style.transition = 'width 5.5s linear';
+                progressBar.style.width = '0%';
+            });
+        }
+
+        // إطلاق دفعة أولية من البلالين
+        for (let i = 0; i < 4; i++) {
             setTimeout(createBalloon, i * 160);
         }
 
-        // إطلاق بلالين متتابعة سريعة
-        balloonSpawnInterval = setInterval(createBalloon, 320);
+        // إطلاق متتابع للبلالين
+        balloonSpawnInterval = setInterval(createBalloon, 330);
 
-        // إيقاف إطلاق البلالين تماماً بعد 5 ثوانٍ
+        // إيقاف الإطلاق بعد 5.5 ثوانٍ
         balloonTimeout = setTimeout(() => {
             clearInterval(balloonSpawnInterval);
             balloonSpawnInterval = null;
-            if (btnText) btnText.textContent = 'أطلق البلالين';
-        }, 5000);
+            if (btnText) btnText.textContent = 'تحدي البلالين';
+
+            // إخفاء الـ HUD وعرض النتيجة بعد انتهاء البلالين الطافية
+            gameEndTimeout = setTimeout(() => {
+                if (hud) {
+                    hud.classList.remove('opacity-100', 'translate-y-0');
+                    hud.classList.add('opacity-0', '-translate-y-4');
+                }
+                isGameRoundActive = false;
+                if (totalBalloonsSpawned > 0) {
+                    showBalloonsScoreModal(totalBalloonsPopped, totalBalloonsSpawned);
+                }
+            }, 1900);
+        }, 5500);
 
         if (manual) {
-            triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.4, 30);
+            triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.4, 25);
         }
     };
 
