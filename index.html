@@ -305,12 +305,27 @@
         .celebration-balloon {
             position: absolute;
             bottom: -180px;
-            pointer-events: auto;
+            pointer-events: auto !important;
             cursor: pointer;
             will-change: transform, opacity;
             user-select: none;
             -webkit-user-select: none;
-            transition: filter 0.2s ease;
+            touch-action: none !important;
+            -webkit-tap-highlight-color: transparent;
+            transition: filter 0.15s ease;
+        }
+        /* Hitbox expansion: extra 24px all around to make tapping on mobile and desktop instant and foolproof */
+        .celebration-balloon::before {
+            content: '';
+            position: absolute;
+            top: -24px;
+            bottom: -24px;
+            left: -24px;
+            right: -24px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: auto !important;
         }
         .celebration-balloon:hover {
             filter: brightness(1.25) drop-shadow(0 0 16px rgba(74, 222, 128, 0.7));
@@ -340,6 +355,10 @@
             justify-content: center;
             text-align: center;
             transform-origin: bottom center;
+            pointer-events: none !important;
+        }
+        .balloon-inner * {
+            pointer-events: none !important;
         }
 
         .balloon-shape {
@@ -6470,18 +6489,33 @@ document.addEventListener('keydown', function(event) {
     let totalBalloonsPopped = 0;
     let isGameRoundActive = false;
 
-    // توليد صوت فرقعة تفاعلي بدون أي ملفات خارجية (Web Audio API)
+    // توليد صوت فرقعة تفاعلي باستخدام سياق صوتي واحد معاد استخدامه (Ultra Responsive Web Audio API)
+    let audioCtx = null;
+    function getAudioContext() {
+        try {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        } catch(e) {
+            return null;
+        }
+    }
+
     function playPopSound() {
         try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
+            const ctx = getAudioContext();
+            if (!ctx) return;
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(420 + Math.random() * 180, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.08);
-            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+            osc.frequency.setValueAtTime(450 + Math.random() * 200, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(75, ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
             gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.08);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -6493,9 +6527,8 @@ document.addEventListener('keydown', function(event) {
     // صوت رنة الفوز الاحتفالية (Victory Chime)
     function playWinChime() {
         try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
+            const ctx = getAudioContext();
+            if (!ctx) return;
             [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
@@ -6566,14 +6599,13 @@ document.addEventListener('keydown', function(event) {
         const totalCountEl = document.getElementById('game-total-count');
         if (totalCountEl) totalCountEl.textContent = totalBalloonsSpawned;
 
-        // توليد البالون بحجم وحركة سريعة وديناميكية لتجري فوق شاشة الموقع
+        // توليد البالون بحجم مريح ومناسب جداً للمس باليد (54px إلى 78px)
         const theme = balloonThemes[Math.floor(Math.random() * balloonThemes.length)];
-        const size = Math.floor(Math.random() * 24) + 48; // 48px to 72px
-        const leftPercent = Math.random() * 92 + 4; // 4% to 96%
-        const duration = Math.random() * 1.5 + 3.8; // 3.8s إلى 5.3s لتجري بسرعة وانسيابية فوق الموقع
+        const size = Math.floor(Math.random() * 24) + 54;
+        const leftPercent = Math.random() * 90 + 5;
+        const duration = Math.random() * 1.5 + 3.8;
         const driftX = (Math.random() * 70 + 25) * (Math.random() > 0.5 ? 1 : -1);
         const swayDuration = Math.random() * 1.2 + 1.8;
-        const swayAngle = (Math.random() * 8 + 4) * (Math.random() > 0.5 ? 1 : -1);
 
         const balloonEl = document.createElement('div');
         balloonEl.className = 'celebration-balloon';
@@ -6595,11 +6627,34 @@ document.addEventListener('keydown', function(event) {
             </div>
         `;
 
-        // تفاعل النقر لفرقعة البالون واحتساب النقاط
-        balloonEl.addEventListener('click', function(e) {
-            e.stopPropagation();
-            popBalloon(balloonEl, e.clientX, e.clientY, theme.border);
-        });
+        // استجابة فورية فائقة السرعة للمس على الموبايل والماوس
+        let hasPopped = false;
+        function handleBalloonHit(e) {
+            if (hasPopped) return;
+            hasPopped = true;
+            if (e && e.cancelable) e.preventDefault();
+            if (e) e.stopPropagation();
+
+            let clientX, clientY;
+            if (e && e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if (e && e.changedTouches && e.changedTouches.length > 0) {
+                clientX = e.changedTouches[0].clientX;
+                clientY = e.changedTouches[0].clientY;
+            } else if (e && typeof e.clientX === 'number') {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            popBalloon(balloonEl, clientX, clientY, theme.border);
+        }
+
+        // أحداث اللمس والنقر الفورية دون أي تأخير
+        balloonEl.addEventListener('pointerdown', handleBalloonHit, { passive: false });
+        balloonEl.addEventListener('touchstart', handleBalloonHit, { passive: false });
+        balloonEl.addEventListener('mousedown', handleBalloonHit);
+        balloonEl.addEventListener('click', handleBalloonHit);
 
         // إزالة البالون بعد انتهاء مسار الطيران
         balloonEl.addEventListener('animationend', function() {
@@ -6612,7 +6667,8 @@ document.addEventListener('keydown', function(event) {
     }
 
     function popBalloon(balloonEl, clickX, clickY, color) {
-        if (balloonEl.classList.contains('balloon-popped')) return;
+        if (!balloonEl || balloonEl._popped) return;
+        balloonEl._popped = true;
         balloonEl.classList.add('balloon-popped');
 
         // تحديث نقاط اللعبة
@@ -6620,21 +6676,26 @@ document.addEventListener('keydown', function(event) {
         const poppedCountEl = document.getElementById('game-popped-count');
         if (poppedCountEl) {
             poppedCountEl.textContent = totalBalloonsPopped;
-            poppedCountEl.style.transform = 'scale(1.35)';
+            poppedCountEl.style.transform = 'scale(1.4)';
             setTimeout(() => {
                 if (poppedCountEl) poppedCountEl.style.transform = 'scale(1)';
             }, 180);
         }
 
+        // إحداثيات دقيقة ومضمونة حتى لو كان اللمس سريعاً
+        const rect = balloonEl.getBoundingClientRect();
+        const posX = (typeof clickX === 'number' && clickX > 0) ? clickX : (rect.left + rect.width / 2);
+        const posY = (typeof clickY === 'number' && clickY > 0) ? clickY : (rect.top + rect.height / 2);
+
         playPopSound();
-        showFloatingPopScore(clickX, clickY);
-        triggerCelebrationConfetti(clickX, clickY, 18, color);
+        showFloatingPopScore(posX, posY);
+        triggerCelebrationConfetti(posX, posY, 20, color);
 
         setTimeout(() => {
             if (balloonEl.parentNode) {
                 balloonEl.parentNode.removeChild(balloonEl);
             }
-        }, 220);
+        }, 190);
     }
 
     // إظهار بطاقة النتيجة النهائية للتحدي
