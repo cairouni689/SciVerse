@@ -628,12 +628,21 @@
 </div>
 
 <!-- Balloons Game Score HUD (Visible while popping balloons) -->
-<div id="balloons-game-hud" class="fixed top-5 left-1/2 -translate-x-1/2 z-[95] pointer-events-none transition-all duration-300 opacity-0 -translate-y-4">
-    <div class="bg-dark-900/90 border-2 border-cuGreen-500/60 shadow-[0_0_30px_rgba(34,197,94,0.4)] backdrop-blur-md px-5 py-2 rounded-full flex items-center gap-3 text-xs md:text-sm font-bold text-white">
-        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-cuGreen-500/20 text-cuGreen-400 animate-pulse">🎯</span>
-        <span>فرقعت: <strong id="game-popped-count" class="text-cuGreen-400 font-extrabold text-base transition-transform inline-block">0</strong> من <strong id="game-total-count" class="text-cuGold-400 font-extrabold text-base">0</strong></span>
-        <div class="w-14 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-            <div id="game-time-progress" class="h-full bg-gradient-to-r from-cuGreen-400 to-cuGold-400 transition-all duration-300 w-full"></div>
+<div id="balloons-game-hud" class="fixed top-4 left-1/2 -translate-x-1/2 z-[95] pointer-events-none transition-all duration-300 opacity-0 -translate-y-4 w-[94%] max-w-md">
+    <div class="bg-dark-900/95 border-2 border-cuGreen-500/70 shadow-[0_0_35px_rgba(34,197,94,0.45)] backdrop-blur-xl px-4 py-2.5 rounded-2xl flex flex-col gap-1.5 text-white">
+        <div class="flex items-center justify-between text-xs font-bold gap-2 flex-wrap">
+            <div class="flex items-center gap-1.5 text-cuGreen-400 truncate">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-cuGreen-500/20 text-xs shrink-0 animate-pulse">🎯</span>
+                <span id="hud-level-badge" class="truncate font-extrabold">المستوى 1 / 6: سنة أولى علوم 🧪</span>
+            </div>
+            <div class="text-gray-300 shrink-0 text-xs">
+                فرقعت: <strong id="game-popped-count" class="text-cuGreen-400 font-extrabold text-sm transition-transform inline-block">0</strong> / <strong id="game-total-count" class="text-cuGold-400 font-extrabold text-sm">10</strong>
+                <span class="text-[10px] text-gray-400 mr-1">(المطلوب: <span id="hud-target-count" class="text-white font-bold">5</span>)</span>
+            </div>
+        </div>
+        <!-- Animated Time Progress Bar -->
+        <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
+            <div id="game-time-progress" class="h-full bg-gradient-to-r from-cuGreen-500 via-emerald-400 to-cuGold-400 transition-all duration-300 w-full rounded-full"></div>
         </div>
     </div>
 </div>
@@ -641,61 +650,29 @@
 <!-- Floating Balloons Container -->
 <div id="celebration-balloons-container"></div>
 
-<!-- Balloons Game Score Results Modal -->
-<div id="balloons-score-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[130] hidden opacity-0 flex items-center justify-center p-4 transition-all duration-300">
-    <div id="balloons-score-card" class="bg-dark-900/95 border-2 border-cuGreen-500/60 p-6 md:p-8 rounded-3xl shadow-[0_0_60px_rgba(34,197,94,0.35)] max-w-sm w-full relative text-center backdrop-blur-2xl transform scale-95 transition-all duration-300 overflow-hidden">
+<!-- Balloons Game Score Results Modal (Handles Level Pass, Level Fail, and Grand Finale) -->
+<div id="balloons-score-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[130] hidden opacity-0 flex items-center justify-center p-4 transition-all duration-300 overflow-y-auto">
+    <div id="balloons-score-card" class="bg-dark-900/95 border-2 border-cuGreen-500/60 p-6 md:p-8 rounded-3xl shadow-[0_0_60px_rgba(34,197,94,0.35)] max-w-lg w-full relative text-center backdrop-blur-2xl transform scale-95 transition-all duration-300 overflow-hidden my-auto max-h-[92vh] flex flex-col justify-between">
         
         <!-- Ambient Glow -->
-        <div class="absolute -top-16 -right-16 w-32 h-32 bg-cuGreen-500/20 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-cuGold-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -top-16 -right-16 w-36 h-36 bg-cuGreen-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-cuGold-500/20 rounded-full blur-2xl pointer-events-none"></div>
 
         <!-- Close Button (X) -->
-        <button onclick="closeBalloonsScoreModal()" class="absolute top-4 left-4 text-gray-400 hover:text-white bg-dark-800 hover:bg-red-500/20 p-2 rounded-full h-8 w-8 flex items-center justify-center transition-all border border-gray-700/60 hover:border-red-500/40 cursor-pointer" title="إغلاق">
+        <button onclick="closeBalloonsScoreModal()" class="absolute top-4 left-4 text-gray-400 hover:text-white bg-dark-800 hover:bg-red-500/20 p-2 rounded-full h-8 w-8 flex items-center justify-center transition-all border border-gray-700/60 hover:border-red-500/40 cursor-pointer z-20" title="إغلاق">
             <i class="fas fa-times text-xs"></i>
         </button>
 
-        <!-- Trophy Icon -->
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-cuGold-500/20 to-cuGreen-500/20 border border-cuGold-400/50 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(234,179,8,0.3)] mb-2.5 animate-bounce">
-            🏆
-        </div>
-
-        <!-- Title -->
-        <h3 class="text-xl font-bold text-white mb-1">
-            نتيجة تحدي العباقرة! 🎯
-        </h3>
-        <p class="text-xs text-gray-400 mb-4">احتفالية الـ 20K متابع - Cairo SciVerse</p>
-
-        <!-- Big Score Box -->
-        <div class="bg-dark-800/80 border border-cuGreen-500/30 rounded-2xl p-4 mb-3.5 shadow-inner">
-            <div class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cuGreen-400 via-emerald-300 to-cuGold-400 font-sans tracking-wide">
-                <span id="final-popped-count">0</span> / <span id="final-total-count">0</span>
-            </div>
-            <div class="text-xs font-semibold text-gray-300 mt-1">بلونة فرقعتها بنجاح! 🎈</div>
-        </div>
-
-        <!-- Dynamic Title / Feedback -->
-        <div id="game-rank-badge" class="mb-5 p-2.5 rounded-xl bg-cuGreen-500/10 border border-cuGreen-500/30 text-xs md:text-sm font-bold text-cuGreen-300 leading-snug">
-            عاش يا عبقري! رد فعلك أسطوري ⚡
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-2.5">
-            <button onclick="playAgainBalloonGame()" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-cuGreen-600 to-cuGreen-500 hover:from-cuGreen-500 hover:to-cuGreen-400 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-lg hover:scale-105 active:scale-95 cursor-pointer">
-                <i class="fas fa-redo-alt text-xs"></i>
-                <span>العب تاني 🔄</span>
-            </button>
-            <button onclick="closeBalloonsScoreModal()" class="py-2.5 px-4 rounded-xl bg-dark-800 hover:bg-dark-700 text-gray-300 hover:text-white font-bold text-xs transition border border-gray-700/60 cursor-pointer">
-                <span>تمام 👍</span>
-            </button>
-        </div>
+        <!-- Dynamic Content Injected by JavaScript -->
+        <div id="balloons-modal-body" class="overflow-y-auto pr-1"></div>
         
     </div>
 </div>
 
 <!-- Balloons Game Start / Replay Button (Bottom Left) -->
-<button id="toggle-balloons-btn" onclick="launchBalloonsBurst(true)" title="تحدي فرقعة البلالين الاحتفالية" class="fixed bottom-6 left-6 z-40 bg-dark-900/90 hover:bg-dark-800 text-cuGreen-400 border border-cuGreen-500/50 backdrop-blur-md px-3 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+<button id="toggle-balloons-btn" onclick="launchLevelGame(null, true)" title="تحدي لعبة البلالين (6 مستويات)" class="fixed bottom-6 left-6 z-40 bg-dark-900/90 hover:bg-dark-800 text-cuGreen-400 border border-cuGreen-500/50 backdrop-blur-md px-3.5 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
     <span class="text-base" id="balloons-toggle-icon">🎯</span>
-    <span id="balloons-toggle-text" class="hidden sm:inline">تحدي البلالين</span>
+    <span id="balloons-toggle-text" class="hidden sm:inline">لعبة البلالين (المستوى 1)</span>
 </button>
 
 <!-- Celebration Top Announcement Banner (20K Milestone) with Green/Black Animated Moving Squares -->
@@ -6478,17 +6455,6 @@ document.addEventListener('keydown', function(event) {
             }, 1000); // تظهر بعد ثانية واحدة تماماً من فتح الموقع
         }
     }
-
-    // ----------------------------------------------------------------------
-    // D. لعبة تحدي فرقعة البلالين والاسكور (Balloons Pop Challenge Game)
-    // ----------------------------------------------------------------------
-    let balloonSpawnInterval = null;
-    let balloonTimeout = null;
-    let gameEndTimeout = null;
-    let totalBalloonsSpawned = 0;
-    let totalBalloonsPopped = 0;
-    let isGameRoundActive = false;
-
     // توليد صوت فرقعة تفاعلي باستخدام سياق صوتي واحد معاد استخدامه (Ultra Responsive Web Audio API)
     let audioCtx = null;
     function getAudioContext() {
@@ -6558,6 +6524,110 @@ document.addEventListener('keydown', function(event) {
         }, 750);
     }
 
+    // ----------------------------------------------------------------------
+    // D. لعبة مستويات العباقرة الـ 6 (Cairo SciVerse 6-Level Balloon Campaign)
+    // ----------------------------------------------------------------------
+    const GAME_LEVELS = [
+        {
+            level: 1,
+            title: "المستوى 1: سنة أولى علوم (المبتدئ) 🧪",
+            shortName: "سنة أولى علوم 🧪",
+            minBalloons: 12,
+            maxBalloons: 17,
+            duration: 5.0,
+            spawnInterval: 480,
+            minSize: 58,
+            maxSize: 78,
+            desc: "بلالين هادئة وكبيرة، العدد عشوائي في كل جولة.. فرقع النصف على الأقل للعبور!"
+        },
+        {
+            level: 2,
+            title: "المستوى 2: باحث فضولي (سنة تانية) 🔬",
+            shortName: "باحث فضولي 🔬",
+            minBalloons: 14,
+            maxBalloons: 19,
+            duration: 4.3,
+            spawnInterval: 390,
+            minSize: 54,
+            maxSize: 72,
+            desc: "السرعة زادت شوية والعدد عشوائي! المطلوب فرقعة النصف للعبور للمستوى التالي."
+        },
+        {
+            level: 3,
+            title: "المستوى 3: كيميائي محترف (سنة تالتة) ⚗️",
+            shortName: "كيميائي محترف ⚗️",
+            minBalloons: 16,
+            maxBalloons: 22,
+            duration: 3.6,
+            spawnInterval: 330,
+            minSize: 50,
+            maxSize: 68,
+            desc: "حركة متعرجة وسريعة وأعداد متغيرة، محتاجة تركيز عالي! المطلوب النصف للعبور."
+        },
+        {
+            level: 4,
+            title: "المستوى 4: فيزيائي عبقري (سنة رابعة) ⚡",
+            shortName: "فيزيائي عبقري ⚡",
+            minBalloons: 18,
+            maxBalloons: 24,
+            duration: 3.0,
+            spawnInterval: 280,
+            minSize: 46,
+            maxSize: 64,
+            desc: "سرعة عالية ومراوغة قوية وأعداد عشوائية! المطلوب النصف للعبور."
+        },
+        {
+            level: 5,
+            title: "المستوى 5: باحث ماجستير 🎓",
+            shortName: "باحث ماجستير 🎓",
+            minBalloons: 20,
+            maxBalloons: 26,
+            duration: 2.4,
+            spawnInterval: 240,
+            minSize: 44,
+            maxSize: 60,
+            desc: "بلالين سريعة وصغيرة.. أعداد عشوائية محتاجة رد فعل خارق! المطلوب النصف للعبور."
+        },
+        {
+            level: 6,
+            title: "المستوى 6: عالم فضاء وأسطورة Cairo SciVerse 🚀",
+            shortName: "أسطورة SciVerse 🚀",
+            minBalloons: 22,
+            maxBalloons: 30,
+            duration: 1.85,
+            spawnInterval: 200,
+            minSize: 40,
+            maxSize: 56,
+            desc: "المستوى النهائي الخارق! سرعة مجنونة وأعداد عشوائية.. المطلوب النصف لتفوز بهدية التيم الكبرى!"
+        }
+    ];
+
+    const LEVEL_STORAGE_KEY = 'sciverse_balloon_level_idx';
+    const SCORES_STORAGE_KEY = 'sciverse_balloon_scores';
+
+    let currentLevelIndex = 0;
+    try {
+        const savedLvl = parseInt(localStorage.getItem(LEVEL_STORAGE_KEY));
+        if (!isNaN(savedLvl) && savedLvl >= 0 && savedLvl < GAME_LEVELS.length) {
+            currentLevelIndex = savedLvl;
+        }
+    } catch(e) {}
+
+    let campaignScores = {};
+    try {
+        const savedScores = JSON.parse(localStorage.getItem(SCORES_STORAGE_KEY));
+        if (savedScores && typeof savedScores === 'object') {
+            campaignScores = savedScores;
+        }
+    } catch(e) {}
+
+    function updateBottomButtonLabel() {
+        const btnText = document.getElementById('balloons-toggle-text');
+        if (btnText) {
+            btnText.textContent = `لعبة البلالين (المستوى ${currentLevelIndex + 1})`;
+        }
+    }
+
     const balloonThemes = [
         {
             bg: 'radial-gradient(circle at 35% 30%, #4ade80 0%, #22c55e 50%, #15803d 85%, #052e16 100%)',
@@ -6591,21 +6661,25 @@ document.addEventListener('keydown', function(event) {
         }
     ];
 
-    function createBalloon() {
+    let balloonSpawnInterval = null;
+    let balloonTimeout = null;
+    let gameEndTimeout = null;
+    let totalBalloonsSpawned = 0;
+    let totalBalloonsPopped = 0;
+    let isGameRoundActive = false;
+
+    function createBalloonForLevel(lvl) {
         const container = document.getElementById('celebration-balloons-container');
         if (!container) return;
 
         totalBalloonsSpawned++;
-        const totalCountEl = document.getElementById('game-total-count');
-        if (totalCountEl) totalCountEl.textContent = totalBalloonsSpawned;
 
-        // توليد البالون بحجم مريح ومناسب جداً للمس باليد (54px إلى 78px)
         const theme = balloonThemes[Math.floor(Math.random() * balloonThemes.length)];
-        const size = Math.floor(Math.random() * 24) + 54;
-        const leftPercent = Math.random() * 90 + 5;
-        const duration = Math.random() * 1.5 + 3.8;
-        const driftX = (Math.random() * 70 + 25) * (Math.random() > 0.5 ? 1 : -1);
-        const swayDuration = Math.random() * 1.2 + 1.8;
+        const size = Math.floor(Math.random() * (lvl.maxSize - lvl.minSize)) + lvl.minSize;
+        const leftPercent = Math.random() * 88 + 6;
+        const duration = lvl.duration * (Math.random() * 0.2 + 0.9);
+        const driftX = (Math.random() * 75 + 25) * (Math.random() > 0.5 ? 1 : -1);
+        const swayDuration = Math.random() * 0.8 + 1.2;
 
         const balloonEl = document.createElement('div');
         balloonEl.className = 'celebration-balloon';
@@ -6627,7 +6701,6 @@ document.addEventListener('keydown', function(event) {
             </div>
         `;
 
-        // استجابة فورية فائقة السرعة للمس على الموبايل والماوس
         let hasPopped = false;
         function handleBalloonHit(e) {
             if (hasPopped) return;
@@ -6650,13 +6723,11 @@ document.addEventListener('keydown', function(event) {
             popBalloon(balloonEl, clientX, clientY, theme.border);
         }
 
-        // أحداث اللمس والنقر الفورية دون أي تأخير
         balloonEl.addEventListener('pointerdown', handleBalloonHit, { passive: false });
         balloonEl.addEventListener('touchstart', handleBalloonHit, { passive: false });
         balloonEl.addEventListener('mousedown', handleBalloonHit);
         balloonEl.addEventListener('click', handleBalloonHit);
 
-        // إزالة البالون بعد انتهاء مسار الطيران
         balloonEl.addEventListener('animationend', function() {
             if (balloonEl.parentNode) {
                 balloonEl.parentNode.removeChild(balloonEl);
@@ -6671,7 +6742,6 @@ document.addEventListener('keydown', function(event) {
         balloonEl._popped = true;
         balloonEl.classList.add('balloon-popped');
 
-        // تحديث نقاط اللعبة
         totalBalloonsPopped++;
         const poppedCountEl = document.getElementById('game-popped-count');
         if (poppedCountEl) {
@@ -6682,7 +6752,6 @@ document.addEventListener('keydown', function(event) {
             }, 180);
         }
 
-        // إحداثيات دقيقة ومضمونة حتى لو كان اللمس سريعاً
         const rect = balloonEl.getBoundingClientRect();
         const posX = (typeof clickX === 'number' && clickX > 0) ? clickX : (rect.left + rect.width / 2);
         const posY = (typeof clickY === 'number' && clickY > 0) ? clickY : (rect.top + rect.height / 2);
@@ -6698,44 +6767,6 @@ document.addEventListener('keydown', function(event) {
         }, 190);
     }
 
-    // إظهار بطاقة النتيجة النهائية للتحدي
-    function showBalloonsScoreModal(popped, total) {
-        const modal = document.getElementById('balloons-score-modal');
-        const card = document.getElementById('balloons-score-card');
-        const poppedEl = document.getElementById('final-popped-count');
-        const totalEl = document.getElementById('final-total-count');
-        const badgeEl = document.getElementById('game-rank-badge');
-        if (!modal || !card) return;
-
-        if (poppedEl) poppedEl.textContent = popped;
-        if (totalEl) totalEl.textContent = total;
-
-        const pct = total > 0 ? (popped / total) * 100 : 0;
-        if (badgeEl) {
-            if (popped === total && total > 0) {
-                badgeEl.innerHTML = '👑 <strong class="text-cuGold-400">أسطورة السرعة والتركيز!</strong> فرقعت كل البلالين بنسبة 100%! قنّاص معتمد لـ Cairo SciVerse ⚡';
-            } else if (pct >= 70) {
-                badgeEl.innerHTML = '🔥 <strong class="text-cuGreen-400">رد فعل خارق وسريع جداً!</strong> عاش يا عبقري فرقعت معظم البلالين 🎈';
-            } else if (pct >= 40) {
-                badgeEl.innerHTML = '🎯 <strong class="text-blue-400">أداء بطل ومحاولة ممتازة!</strong> تقدر تجيب سكور أعلى في الجولة الجاية 🚀';
-            } else if (popped > 0) {
-                badgeEl.innerHTML = '🎈 <strong class="text-cuGold-400">عاش على المحاولة!</strong> العب تاني واكسر رقمك القياسي 💪';
-            } else {
-                badgeEl.innerHTML = '😄 <strong class="text-gray-300">فاتتك البلالين ومفرقعتش!</strong> دوس "العب تاني" وفرقعهم بسرعة 🎯';
-            }
-        }
-
-        modal.classList.remove('hidden');
-        requestAnimationFrame(() => {
-            modal.classList.remove('opacity-0');
-            card.classList.remove('scale-95');
-            card.classList.add('scale-100');
-        });
-
-        playWinChime();
-        triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.45, 55);
-    }
-
     window.closeBalloonsScoreModal = function() {
         const modal = document.getElementById('balloons-score-modal');
         const card = document.getElementById('balloons-score-card');
@@ -6747,37 +6778,299 @@ document.addEventListener('keydown', function(event) {
         modal.classList.add('opacity-0');
         setTimeout(() => {
             modal.classList.add('hidden');
-        }, 320);
+        }, 300);
     };
 
-    window.playAgainBalloonGame = function() {
+    window.startNextLevel = function() {
         closeBalloonsScoreModal();
         setTimeout(() => {
-            launchBalloonsBurst(true);
+            launchLevelGame(currentLevelIndex);
         }, 350);
     };
 
-    // إطلاق البلالين وبدء جولة التحدي لمدة 5.5 ثوانٍ
-    window.launchBalloonsBurst = function(manual = false) {
+    window.retryCurrentLevel = function(lvlIdx = null) {
+        closeBalloonsScoreModal();
+        const idx = (typeof lvlIdx === 'number') ? lvlIdx : currentLevelIndex;
+        setTimeout(() => {
+            launchLevelGame(idx);
+        }, 350);
+    };
+
+    window.resetGameCampaign = function() {
+        currentLevelIndex = 0;
+        campaignScores = {};
+        try {
+            localStorage.removeItem(LEVEL_STORAGE_KEY);
+            localStorage.removeItem(SCORES_STORAGE_KEY);
+        } catch(e) {}
+        updateBottomButtonLabel();
+        closeBalloonsScoreModal();
+        setTimeout(() => {
+            launchLevelGame(0);
+        }, 350);
+    };
+
+    function renderLevelSuccess(container, lvl, popped, total, pct, target) {
+        const nextLvl = GAME_LEVELS[lvl.level];
+        const speedRating = pct >= 90 ? '⚡ سرعة أسطورية وخارقة' : (pct >= 75 ? '🔥 سرعة ممتازة جداً' : '🎯 رد فعل سريع ومتقن');
+        const stars = pct >= 90 ? '⭐⭐⭐⭐⭐' : (pct >= 75 ? '⭐⭐⭐⭐' : '⭐⭐⭐');
+
+        container.innerHTML = `
+            <!-- Trophy & Status -->
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cuGreen-500/25 to-emerald-500/25 border-2 border-cuGreen-400/60 flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(34,197,94,0.35)] mb-2.5 animate-bounce">
+                🎉
+            </div>
+            
+            <span class="inline-block px-3.5 py-1 rounded-full bg-cuGreen-500/20 border border-cuGreen-400/50 text-cuGreen-300 text-xs font-bold mb-1.5">
+                المستوى ${lvl.level} من 6 مكتمل بنجاح ✅
+            </span>
+
+            <h3 class="text-xl md:text-2xl font-black text-white mb-1">
+                عاش يا عبقري! عديت المستوى بنجاح 🚀
+            </h3>
+            <p class="text-xs text-gray-400 mb-3.5">${lvl.title}</p>
+
+            <!-- Score Pill -->
+            <div class="bg-dark-800/80 border border-cuGreen-500/30 rounded-2xl p-3.5 mb-3.5 shadow-inner">
+                <div class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cuGreen-400 via-emerald-300 to-cuGold-400 font-sans tracking-wide">
+                    ${popped} / ${total}
+                </div>
+                <div class="text-xs font-bold text-gray-300 mt-1">بلونة فرقعتها (نسبة ${pct}%) • المطلوب كان ${target} فقط</div>
+            </div>
+
+            <!-- Performance Analysis Box -->
+            <div class="bg-dark-800/60 border border-gray-700/60 rounded-xl p-3 text-right text-xs mb-4 space-y-1.5 text-gray-300">
+                <div class="font-bold text-cuGreen-400 border-b border-gray-700/60 pb-1 flex items-center justify-between">
+                    <span>📊 تحليل الأداء والتركيز:</span>
+                    <span>${stars}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">سرعة رد الفعل:</span>
+                    <span class="font-bold text-white">${speedRating}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">دقة التصويب:</span>
+                    <span class="font-bold text-cuGold-400">${pct}%</span>
+                </div>
+                <div class="text-[11px] text-gray-400 pt-1 border-t border-gray-700/40">
+                    💡 <strong class="text-white">المستوى القادم (${nextLvl.shortName}):</strong> ${nextLvl.desc}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-2.5">
+                <button onclick="startNextLevel()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-cuGreen-600 via-emerald-500 to-cuGreen-500 hover:from-cuGreen-500 hover:to-emerald-400 text-white font-extrabold text-xs md:text-sm transition flex items-center justify-center gap-2 shadow-lg hover:scale-105 active:scale-95 cursor-pointer">
+                    <span>انتقل إلى ${nextLvl.shortName} 🚀</span>
+                    <i class="fas fa-arrow-left text-xs"></i>
+                </button>
+                <button onclick="retryCurrentLevel(${lvl.level - 1})" class="py-2.5 px-3 rounded-xl bg-dark-800 hover:bg-dark-700 text-gray-300 hover:text-white font-bold text-xs transition border border-gray-700/60 cursor-pointer">
+                    <span>إعادة المستوى 🔄</span>
+                </button>
+            </div>
+        `;
+    }
+
+    function renderLevelFailure(container, lvl, popped, total, pct, target) {
+        container.innerHTML = `
+            <!-- Warning Icon -->
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-dark-800 border-2 border-red-500/50 flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(239,68,68,0.25)] mb-2.5">
+                💪
+            </div>
+            
+            <span class="inline-block px-3.5 py-1 rounded-full bg-red-500/20 border border-red-500/50 text-red-300 text-xs font-bold mb-1.5">
+                المستوى ${lvl.level}: لم تكتمل المحاولة ❌
+            </span>
+
+            <h3 class="text-xl md:text-2xl font-black text-white mb-1">
+                حاول تاني يا عبقري! تقدر تجيبها 🎯
+            </h3>
+            <p class="text-xs text-gray-400 mb-3.5">${lvl.title}</p>
+
+            <!-- Score Pill -->
+            <div class="bg-dark-800/80 border border-red-500/30 rounded-2xl p-3.5 mb-3.5 shadow-inner">
+                <div class="text-3xl font-extrabold text-red-400 font-sans tracking-wide">
+                    ${popped} / ${total}
+                </div>
+                <div class="text-xs font-bold text-gray-300 mt-1">فرقعت ${popped} فقط • المطلوب للنجاح كان ${target} بلالين (النصف)</div>
+            </div>
+
+            <!-- Analysis Box -->
+            <div class="bg-dark-800/60 border border-gray-700/60 rounded-xl p-3 text-right text-xs mb-4 text-gray-300 space-y-1.5">
+                <div class="font-bold text-red-400 border-b border-gray-700/60 pb-1">
+                    🔍 تحليل الأداء ونصائح العبور:
+                </div>
+                <p class="text-[11px] leading-relaxed text-gray-400">
+                    البلالين كانت سريعة عليك شوية ومحتاجة رد فعل أسرع. ركّز عينك في الجزء السفلي من الشاشة واضغط أول ما البالونة تبدأ تظهر فوراً!
+                </p>
+            </div>
+
+            <!-- Retry Button -->
+            <button onclick="retryCurrentLevel(${lvl.level - 1})" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cuGreen-600 to-cuGreen-500 hover:from-cuGreen-500 hover:to-cuGreen-400 text-white font-extrabold text-xs md:text-sm transition flex items-center justify-center gap-2 shadow-lg hover:scale-105 active:scale-95 cursor-pointer">
+                <i class="fas fa-redo-alt text-xs"></i>
+                <span>إعادة المحاولة في ${lvl.shortName} 🔄</span>
+            </button>
+        `;
+    }
+
+    function renderGrandFinale(container) {
+        let totalAllPopped = 0;
+        let totalAllBalloons = 0;
+        let rowsHtml = '';
+
+        GAME_LEVELS.forEach(lvl => {
+            const fallbackTotal = Math.round((lvl.minBalloons + lvl.maxBalloons) / 2);
+            const sc = campaignScores[lvl.level] || { popped: Math.ceil(fallbackTotal / 2), total: fallbackTotal, pct: 50 };
+            totalAllPopped += sc.popped;
+            totalAllBalloons += sc.total;
+            rowsHtml += `
+                <div class="bg-dark-800/90 border border-gray-700/70 rounded-lg p-2 flex items-center justify-between text-xs">
+                    <span class="font-bold text-white truncate max-w-[130px] text-right">${lvl.shortName}</span>
+                    <span class="text-cuGreen-400 font-extrabold">${sc.popped} / ${sc.total}</span>
+                    <span class="text-cuGold-400 font-bold">${sc.pct}% ✅</span>
+                </div>
+            `;
+        });
+
+        const totalPct = totalAllBalloons > 0 ? Math.round((totalAllPopped / totalAllBalloons) * 100) : 100;
+        const waMsg = encodeURIComponent(`مرحباً تيم Cairo SciVerse! أنا بطل تحدي البلالين وخلصت الـ 6 مستويات بنجاح بمجموع ${totalAllPopped}/${totalAllBalloons} بلونة (${totalPct}%) وجاي أستلم هديتي الخاصة بمناسبة الـ 20K متابع! 🎁🎉`);
+
+        container.innerHTML = `
+            <!-- Big Champion Trophy -->
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-cuGold-500/30 via-emerald-500/20 to-cuGreen-500/30 border-2 border-cuGold-400 flex items-center justify-center text-4xl shadow-[0_0_35px_rgba(234,179,8,0.5)] mb-2.5 animate-bounce">
+                🏆
+            </div>
+            
+            <span class="inline-block px-3.5 py-1 rounded-full bg-gradient-to-r from-cuGold-500/30 to-cuGreen-500/30 border border-cuGold-400/60 text-cuGold-300 text-xs font-black tracking-wider mb-1.5">
+                🎉 بطل وباحث Cairo SciVerse المعتمد 🎓
+            </span>
+
+            <h3 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cuGold-300 via-emerald-300 to-cuGreen-400 mb-1">
+                ألف مبروك يا أسطورة العلوم! 👑
+            </h3>
+            <p class="text-xs text-gray-300 mb-3 leading-relaxed">
+                لقد أنهيت جميع المستويات الـ 6 بنجاح واحتفلت معنا بـ <strong>20,000 متابع</strong> على فيسبوك! لك هدية وتقدير خاص من تيم SciVerse 🎁✨
+            </p>
+
+            <!-- Comprehensive Level Scores Grid -->
+            <div class="bg-dark-800/70 border border-cuGreen-500/30 rounded-2xl p-3 mb-3 text-right">
+                <div class="text-xs font-extrabold text-cuGreen-400 mb-2 border-b border-gray-700/60 pb-1 flex justify-between">
+                    <span>📋 تقرير أداء المستويات الـ 6:</span>
+                    <span class="text-cuGold-400">الإجمالي: ${totalAllPopped} / ${totalAllBalloons} (${totalPct}%)</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    ${rowsHtml}
+                </div>
+            </div>
+
+            <!-- Gift Card Box -->
+            <div class="bg-gradient-to-br from-cuGold-500/15 via-dark-800 to-cuGreen-500/15 border-2 border-cuGold-400/50 rounded-2xl p-3.5 mb-3 text-center shadow-lg">
+                <div class="text-xs font-bold text-cuGold-300 mb-1 flex items-center justify-center gap-1.5">
+                    <span class="text-base">🎁</span>
+                    <span>كود الهدية والتقدير من تيم سايفرس:</span>
+                </div>
+                <div class="inline-block bg-black/60 px-4 py-1.5 rounded-xl text-cuGold-400 font-mono font-black text-sm tracking-widest border border-cuGold-500/40 mb-2.5 select-all">
+                    SCIVERSE-20K-CHAMPION
+                </div>
+                
+                <a href="https://wa.me/201114357460?text=${waMsg}" target="_blank" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 hover:from-green-500 hover:to-emerald-400 text-white font-extrabold text-xs md:text-sm transition flex items-center justify-center gap-2 shadow-lg hover:scale-105 active:scale-95 mb-2">
+                    <i class="fab fa-whatsapp text-base"></i>
+                    <span>🎁 استلم هديتك وتواصل مع التيم على واتساب</span>
+                </a>
+
+                <a href="https://www.facebook.com/profile.php?id=61579331580900" target="_blank" class="w-full py-2 px-3 rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white text-xs font-bold transition flex items-center justify-center gap-1.5">
+                    <i class="fab fa-facebook-f text-xs"></i>
+                    <span>شارك إنجازك على صفحتنا في فيسبوك</span>
+                </a>
+            </div>
+
+            <!-- Restart Campaign Option -->
+            <button onclick="resetGameCampaign()" class="text-xs text-gray-400 hover:text-white transition underline cursor-pointer">
+                بدء التحدي من جديد من المستوى 1 🔄
+            </button>
+        `;
+    }
+
+    function evaluateLevelResult(lvl, popped, total) {
+        const target = Math.ceil(total / 2);
+        const hasPassed = popped >= target;
+        const pct = total > 0 ? Math.round((popped / total) * 100) : 0;
+
+        campaignScores[lvl.level] = {
+            level: lvl.level,
+            name: lvl.shortName,
+            popped: popped,
+            total: total,
+            pct: pct,
+            passed: hasPassed
+        };
+        try {
+            localStorage.setItem(SCORES_STORAGE_KEY, JSON.stringify(campaignScores));
+        } catch(e) {}
+
+        const modal = document.getElementById('balloons-score-modal');
+        const modalBody = document.getElementById('balloons-modal-body');
+        const card = document.getElementById('balloons-score-card');
+        if (!modal || !modalBody || !card) return;
+
+        if (hasPassed) {
+            playWinChime();
+            triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.45, 60);
+
+            if (lvl.level === 6) {
+                renderGrandFinale(modalBody);
+            } else {
+                currentLevelIndex = lvl.level; // next level
+                try {
+                    localStorage.setItem(LEVEL_STORAGE_KEY, currentLevelIndex);
+                } catch(e) {}
+                updateBottomButtonLabel();
+                renderLevelSuccess(modalBody, lvl, popped, total, pct, target);
+            }
+        } else {
+            renderLevelFailure(modalBody, lvl, popped, total, pct, target);
+        }
+
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.remove('opacity-0');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        });
+    }
+
+    window.launchLevelGame = function(levelIdx = null, isManual = true) {
+        if (typeof levelIdx === 'number' && levelIdx >= 0 && levelIdx < GAME_LEVELS.length) {
+            currentLevelIndex = levelIdx;
+        }
+        const lvl = GAME_LEVELS[currentLevelIndex];
+
+        // توليد عدد بلالين عشوائي مختلف في كل مرة يلعب فيها حتى في نفس المستوى
+        const minB = lvl.minBalloons || 12;
+        const maxB = lvl.maxBalloons || 18;
+        const roundTotalBalloons = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
+        const target = Math.ceil(roundTotalBalloons / 2);
+
         if (balloonSpawnInterval) clearInterval(balloonSpawnInterval);
         if (balloonTimeout) clearTimeout(balloonTimeout);
         if (gameEndTimeout) clearTimeout(gameEndTimeout);
 
-        // تصفير سكور الجولة
         totalBalloonsSpawned = 0;
         totalBalloonsPopped = 0;
         isGameRoundActive = true;
 
-        // إظهار شريط السكور (HUD)
         const hud = document.getElementById('balloons-game-hud');
+        const hudLevelBadge = document.getElementById('hud-level-badge');
+        const hudTargetCount = document.getElementById('hud-target-count');
         const poppedCountEl = document.getElementById('game-popped-count');
         const totalCountEl = document.getElementById('game-total-count');
         const progressBar = document.getElementById('game-time-progress');
-        const btnText = document.getElementById('balloons-toggle-text');
 
+        if (hudLevelBadge) hudLevelBadge.textContent = `${lvl.shortName} (مستوى ${lvl.level}/6)`;
+        if (hudTargetCount) hudTargetCount.textContent = target;
         if (poppedCountEl) poppedCountEl.textContent = '0';
-        if (totalCountEl) totalCountEl.textContent = '0';
-        if (btnText) btnText.textContent = 'فرقع البلالين! 🎯';
+        if (totalCountEl) totalCountEl.textContent = roundTotalBalloons;
+
+        const totalRoundSeconds = (roundTotalBalloons * lvl.spawnInterval / 1000) + lvl.duration + 0.6;
 
         if (hud) {
             hud.classList.remove('opacity-0', '-translate-y-4');
@@ -6788,41 +7081,44 @@ document.addEventListener('keydown', function(event) {
             progressBar.style.transition = 'none';
             progressBar.style.width = '100%';
             requestAnimationFrame(() => {
-                progressBar.style.transition = 'width 5.5s linear';
+                progressBar.style.transition = `width ${totalRoundSeconds}s linear`;
                 progressBar.style.width = '0%';
             });
         }
 
-        // إطلاق دفعة أولية من البلالين
-        for (let i = 0; i < 4; i++) {
-            setTimeout(createBalloon, i * 160);
+        // إطلاق دفعة أولية
+        for (let i = 0; i < 2; i++) {
+            setTimeout(() => createBalloonForLevel(lvl), i * 150);
         }
 
-        // إطلاق متتابع للبلالين
-        balloonSpawnInterval = setInterval(createBalloon, 330);
+        let spawnedCount = 2;
+        balloonSpawnInterval = setInterval(() => {
+            if (spawnedCount < roundTotalBalloons) {
+                createBalloonForLevel(lvl);
+                spawnedCount++;
+            } else {
+                clearInterval(balloonSpawnInterval);
+                balloonSpawnInterval = null;
+            }
+        }, lvl.spawnInterval);
 
-        // إيقاف الإطلاق بعد 5.5 ثوانٍ
-        balloonTimeout = setTimeout(() => {
-            clearInterval(balloonSpawnInterval);
-            balloonSpawnInterval = null;
-            if (btnText) btnText.textContent = 'تحدي البلالين';
+        const totalWaitMs = (roundTotalBalloons * lvl.spawnInterval) + (lvl.duration * 1000) + 800;
+        gameEndTimeout = setTimeout(() => {
+            if (hud) {
+                hud.classList.remove('opacity-100', 'translate-y-0');
+                hud.classList.add('opacity-0', '-translate-y-4');
+            }
+            isGameRoundActive = false;
+            // إذا كانت الجولة تلقائية ولم يفرقع المستخدم أي بالونة لا نظهر له نافذة الرسوب
+            if (!isManual && totalBalloonsPopped === 0) {
+                return;
+            }
+            evaluateLevelResult(lvl, totalBalloonsPopped, roundTotalBalloons);
+        }, totalWaitMs);
+    };
 
-            // إخفاء الـ HUD وعرض النتيجة بعد انتهاء البلالين الطافية
-            gameEndTimeout = setTimeout(() => {
-                if (hud) {
-                    hud.classList.remove('opacity-100', 'translate-y-0');
-                    hud.classList.add('opacity-0', '-translate-y-4');
-                }
-                isGameRoundActive = false;
-                if (totalBalloonsSpawned > 0) {
-                    showBalloonsScoreModal(totalBalloonsPopped, totalBalloonsSpawned);
-                }
-            }, 1900);
-        }, 5500);
-
-        if (manual) {
-            triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.4, 25);
-        }
+    window.launchBalloonsBurst = function(manual = false) {
+        launchLevelGame(null, true);
     };
 
     // ----------------------------------------------------------------------
@@ -6870,7 +7166,8 @@ document.addEventListener('keydown', function(event) {
     function initCelebration() {
         initCelebrationSquaresCanvas();
         checkAndShowCelebrationPopup(); // يظهر بعد ثانية واحدة لمرة واحدة
-        launchBalloonsBurst(false);     // تجري فوق الموقع لمدة 5 ثوانٍ
+        updateBottomButtonLabel();
+        launchLevelGame(null, false);   // إطلاق بلالين احتفالية تلقائية لمدة 5 ثوانٍ دون إجبار على الرسوب
     }
 
     if (document.readyState === 'loading') {
