@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cairo SciVerse - جامعة القاهرة</title>
-    <link rel="icon" type="image/jpeg" href="https://i.postimg.cc/m2fBMh3D/photo-5792048219872234554-y.jpg">
-<link rel="shortcut icon" type="image/jpeg" href="https://i.postimg.cc/m2fBMh3D/photo-5792048219872234554-y.jpg">
-<link rel="apple-touch-icon" href="https://i.postimg.cc/m2fBMh3D/photo-5792048219872234554-y.jpg">
+    <link rel="icon" type="image/jpeg" href="https://i.postimg.cc/K8kccXJ1/photo-5819100475113017017-y.jpg">
+<link rel="shortcut icon" type="image/jpeg" href="https://i.postimg.cc/K8kccXJ1/photo-5819100475113017017-y.jpg">
+<link rel="apple-touch-icon" href="https://i.postimg.cc/K8kccXJ1/photo-5819100475113017017-y.jpg">
     <meta name="description" content="Cairo SciVerse - البوابة التعريفية لكلية العلوم جامعة القاهرة">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -218,6 +218,217 @@
         @keyframes circularProgress {
             0% { stroke-dasharray: 0, 100; }
         }
+
+        /* =========================================================
+           20K CELEBRATION STYLES: SQUARES, MODAL & BALLOONS
+           ========================================================= */
+
+        /* Top Celebration Banner & Moving Squares Canvas */
+        .celebration-banner-wrapper {
+            position: relative;
+            background: linear-gradient(135deg, #021a0a 0%, #061208 50%, #010a04 100%);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.4);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6), inset 0 -1px 0 rgba(74, 222, 128, 0.3);
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, padding 0.35s ease;
+        }
+
+        .celebration-squares-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        @keyframes celebrationBadgePulse {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(34, 197, 94, 0.5), inset 0 0 10px rgba(34, 197, 94, 0.2);
+                border-color: rgba(74, 222, 128, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(74, 222, 128, 0.9), inset 0 0 15px rgba(234, 179, 8, 0.3);
+                border-color: rgba(250, 204, 21, 0.9);
+            }
+        }
+        .celebration-badge-glow {
+            animation: celebrationBadgePulse 3s infinite ease-in-out;
+        }
+
+        /* Celebration Modal Styles */
+        #celebration-popup-modal {
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #celebration-popup-modal.modal-active {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+        #celebration-popup-modal.modal-active #celebration-modal-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        #celebration-modal-card {
+            transform: scale(0.92) translateY(20px);
+            opacity: 0;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+
+        @keyframes goldCelebrationShimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .celebration-gold-text {
+            background: linear-gradient(90deg, #4ade80 0%, #facc15 25%, #22c55e 50%, #fef08a 75%, #4ade80 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldCelebrationShimmer 4s linear infinite;
+        }
+
+        /* Floating Balloons System */
+        #celebration-balloons-container {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 90;
+        }
+
+        .celebration-balloon {
+            position: absolute;
+            bottom: -180px;
+            pointer-events: auto;
+            cursor: pointer;
+            will-change: transform, opacity;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: filter 0.2s ease;
+        }
+        .celebration-balloon:hover {
+            filter: brightness(1.25) drop-shadow(0 0 16px rgba(74, 222, 128, 0.7));
+        }
+
+        @keyframes balloonRise {
+            0% {
+                transform: translate3d(0, 0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            8% {
+                opacity: 1;
+            }
+            85% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(var(--drift-x, 25px), calc(-100vh - 220px), 0) rotate(var(--sway-angle, 6deg));
+                opacity: 0;
+            }
+        }
+
+        .balloon-inner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform-origin: bottom center;
+        }
+
+        .balloon-shape {
+            width: var(--b-size, 58px);
+            height: calc(var(--b-size, 58px) * 1.24);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: relative;
+            box-shadow: inset -10px -12px 20px rgba(0, 0, 0, 0.5),
+                        inset 8px 8px 16px rgba(255, 255, 255, 0.45),
+                        0 15px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .balloon-gloss {
+            position: absolute;
+            top: 10%;
+            left: 18%;
+            width: 30%;
+            height: 44%;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 75%);
+            border-radius: 50%;
+            transform: rotate(-35deg);
+            pointer-events: none;
+        }
+
+        .balloon-label {
+            position: relative;
+            z-index: 5;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 800;
+            font-size: calc(var(--b-size, 58px) * 0.24);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            pointer-events: none;
+            font-family: sans-serif;
+        }
+
+        .balloon-knot-shape {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 7px;
+            border-radius: 2px 2px 4px 4px;
+            background: inherit;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .balloon-string-svg {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 75px;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        @keyframes balloonPopAnim {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            45% {
+                transform: scale(1.5);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(2.4);
+                opacity: 0;
+            }
+        }
+        .balloon-popped {
+            animation: balloonPopAnim 0.22s ease-out forwards !important;
+            pointer-events: none !important;
+        }
+
+        /* Pop particles */
+        .celebration-spark {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            border-radius: 50%;
+            will-change: transform, opacity;
+        }
     </style>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -248,7 +459,7 @@
       "name": "Cairo SciVerse",
       "description": "البوابة التعريفية الشاملة والمنصة التعليمية لطلاب كلية العلوم بجامعة القاهرة. تحتوي على تعريف بمواد سنة أولى، الأقسام العامة والبرامج النوعية، وحساب المعدل التراكمي GPA.",
       "url": "https://www.science-cairo.com", 
-      "logo": "https://i.postimg.cc/m2fBMh3D/photo-5792048219872234554-y.jpg",
+      "logo": "https://i.postimg.cc/K8kccXJ1/photo-5819100475113017017-y.jpg",
       "parentOrganization": {
         "@type": "CollegeOrUniversity",
         "name": "Cairo University Faculty of Science",
@@ -278,7 +489,7 @@
             <div class="relative inline-block mb-5 group">
                 <div class="absolute inset-0 bg-cuGreen-500 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
                 <div class="w-24 h-24 bg-dark-900 rounded-full flex items-center justify-center border-2 border-cuGreen-500 shadow-[0_0_20px_rgba(34,197,94,0.3)] relative z-10 mx-auto overflow-hidden p-1">
-                    <img src="https://i.postimg.cc/m2fBMh3D/photo-5792048219872234554-y.jpg" alt="Cairo SciVerse" class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300">
+                    <img src="https://i.postimg.cc/K8kccXJ1/photo-5819100475113017017-y.jpg" alt="Cairo SciVerse" class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300">
                 </div>
             </div>
             <h2 class="text-3xl font-bold text-white mb-2 tracking-wide">بوابة <span class="text-transparent bg-clip-text bg-gradient-to-r from-cuGreen-400 to-cuGold-500">العباقرة</span></h2>
@@ -321,13 +532,100 @@
     </div>
 </a>
 
+<!-- Celebration Popup Modal (Simple & Sleek 20K Milestone) -->
+<div id="celebration-popup-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[120] hidden opacity-0 flex items-center justify-center p-4 transition-all duration-300">
+    <div id="celebration-modal-card" class="bg-dark-900/95 border border-cuGreen-500/50 p-6 md:p-8 rounded-3xl shadow-[0_0_40px_rgba(34,197,94,0.25)] max-w-md w-full relative text-center backdrop-blur-xl">
+        
+        <!-- Subtle Glow Orbs -->
+        <div class="absolute -top-16 -right-16 w-32 h-32 bg-cuGreen-500/15 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-cuGold-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Close Button (X) -->
+        <button onclick="closeCelebrationPopup()" class="absolute top-4 left-4 text-gray-400 hover:text-white bg-dark-800 hover:bg-red-500/20 p-2 rounded-full h-8 w-8 flex items-center justify-center transition-all border border-gray-700/60 hover:border-red-500/40 cursor-pointer" title="إغلاق">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+
+        <!-- Minimal Header & Badge -->
+        <div class="mb-3">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-cuGreen-500/15 border border-cuGreen-500/30 flex items-center justify-center text-2xl shadow-inner mb-2.5">
+                🎉
+            </div>
+            <span class="inline-block px-3 py-1 rounded-full bg-cuGreen-500/20 text-cuGreen-400 font-bold text-xs border border-cuGreen-400/40">
+                20,000 متابع على فيسبوك 🚀
+            </span>
+        </div>
+
+        <!-- Clean Title -->
+        <h3 class="text-xl font-bold text-white mb-2.5">
+            عائلة Cairo SciVerse تكبر بكم 💚
+        </h3>
+
+        <!-- Simple, Warm Message -->
+        <p class="text-xs md:text-sm text-gray-300 leading-relaxed mb-6">
+            بدأنا من سنة ولسه زي ما احنا وبنتطور، فخورين جداً بثقتكم فينا ومكملين بيكم ومعاكم نحو الأفضل دائماً ✨
+        </p>
+
+        <!-- Clean Action Buttons -->
+        <div class="flex items-center gap-3">
+            <a href="https://www.facebook.com/profile.php?id=61579331580900" target="_blank" class="flex-1 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md hover:scale-105 active:scale-95">
+                <i class="fab fa-facebook-f text-xs"></i>
+                <span>صفحتنا على فيسبوك</span>
+            </a>
+            <button onclick="closeCelebrationPopup()" class="flex-1 py-2.5 px-4 rounded-xl bg-cuGreen-600 hover:bg-cuGreen-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md hover:scale-105 active:scale-95 cursor-pointer">
+                <span>استكشف الموقع</span>
+                <i class="fas fa-arrow-left text-xs"></i>
+            </button>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Floating Balloons Container -->
+<div id="celebration-balloons-container"></div>
+
+<!-- Balloons Replay Button (Bottom Left) -->
+<button id="toggle-balloons-btn" onclick="launchBalloonsBurst(true)" title="إطلاق البلالين الاحتفالية" class="fixed bottom-6 left-6 z-40 bg-dark-900/90 hover:bg-dark-800 text-cuGreen-400 border border-cuGreen-500/50 backdrop-blur-md px-3 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(34,197,94,0.25)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)] flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+    <span class="text-base" id="balloons-toggle-icon">🎈</span>
+    <span id="balloons-toggle-text" class="hidden sm:inline">أطلق البلالين</span>
+</button>
+
+<!-- Celebration Top Announcement Banner (20K Milestone) with Green/Black Animated Moving Squares -->
+<div id="celebration-top-banner" class="celebration-banner-wrapper text-white relative z-40">
+    <!-- Canvas with Green and Black moving squares and geometric constellation shapes -->
+    <canvas id="celebration-squares-canvas" class="celebration-squares-canvas"></canvas>
+    
+    <div class="container mx-auto px-4 py-2 relative z-10 flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+        <div class="flex items-center gap-2.5 md:gap-3.5 flex-1 min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cuGreen-500/20 border border-cuGreen-400/60 text-[11px] md:text-xs font-bold text-cuGreen-300 celebration-badge-glow shrink-0">
+                <span class="w-2 h-2 rounded-full bg-cuGreen-400 animate-ping"></span>
+                <i class="fas fa-bullhorn text-cuGold-400"></i>
+                <span>إنجاز 20,000 عبقري!</span>
+            </div>
+            <div class="text-xs md:text-sm font-medium text-gray-200 truncate flex items-center gap-1.5">
+                <span class="text-cuGold-400">🎉</span>
+                <span>عام كامل من العطاء.. شكراً لأكثر من <strong>20K متابع</strong> على فيسبوك لثقتكم المستمرة بنا! 💚</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2 shrink-0">
+            <a href="https://www.facebook.com/profile.php?id=61579331580900" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] md:text-xs font-bold transition-all shadow-sm hover:shadow-blue-500/30 hover:scale-105 active:scale-95">
+                <i class="fab fa-facebook-f text-xs"></i>
+                <span class="hidden xs:inline">صفحة فيسبوك</span>
+            </a>
+            <button type="button" onclick="dismissCelebrationBanner()" title="إخفاء الشريط" aria-label="إغلاق الشريط الاحتفالي" class="w-7 h-7 rounded-full bg-black/50 hover:bg-red-500 text-gray-300 hover:text-white flex items-center justify-center transition-all border border-gray-700/60 hover:border-red-400 hover:rotate-90 cursor-pointer">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
     <div class="bg-black text-gray-300 text-sm py-2 px-4 hidden md:block border-b border-gray-800">
         <div class="container mx-auto flex justify-end items-center">
             <div class="flex gap-4 items-center">
 <a href="https://wa.me/201114357460" target="_blank" class="w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center hover:bg-green-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-green-500/50 group" title="تواصل معنا عبر واتساب">
         <i class="fab fa-whatsapp text-lg group-hover:scale-110 transition-transform"></i>
     </a>
-    <a href="https://www.facebook.com/share/1A3ns3whzY/" target="_blank" class="w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-blue-500/50 group" title="فيسبوك">
+    <a href="https://www.facebook.com/profile.php?id=61579331580900" target="_blank" class="w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-blue-500/50 group" title="فيسبوك">
         <i class="fab fa-facebook-f text-lg group-hover:scale-110 transition-transform"></i>
     </a>
     <a href="#" target="_blank" class="w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-red-500/50 group" title="يوتيوب">
@@ -342,7 +640,7 @@
             <div class="flex justify-between items-center">
                 <a href="javascript:void(0)" onclick="showHomePage()" class="flex items-center gap-3 group">
                     <div class="relative w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-cuGreen-500 group-hover:border-cuGold-500 transition duration-300 shadow-lg group-hover:shadow-cuGreen-500/50">
-                         <img src="https://i.postimg.cc/m2fBMh3D/photo-5792048219872234554-y.jpg" alt="Cairo SciVerse Logo" class="w-full h-full object-cover">
+                         <img src="https://i.postimg.cc/K8kccXJ1/photo-5819100475113017017-y.jpg" alt="Cairo SciVerse Logo" class="w-full h-full object-cover">
                     </div>
                     <div>
                         <h1 class="text-xl md:text-2xl font-bold text-white leading-none font-sans">Cairo SciVerse</h1>
@@ -439,7 +737,7 @@
              <div class="flex justify-center gap-6 text-xl">
 <div class="flex justify-center gap-6 text-xl">
     <a href="https://wa.me/201114357460" class="w-10 h-10 rounded-lg bg-dark-900 flex items-center justify-center text-gray-400 hover:text-green-500 hover:bg-dark-700 transition transform hover:-translate-y-1 inline-block"><i class="fab fa-whatsapp"></i></a>
-    <a href="https://www.facebook.com/share/1A3ns3whzY/" class="w-10 h-10 rounded-lg bg-dark-900 flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-dark-700 transition transform hover:-translate-y-1 inline-block"><i class="fab fa-facebook-f"></i></a>
+    <a href="https://www.facebook.com/profile.php?id=61579331580900" class="w-10 h-10 rounded-lg bg-dark-900 flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-dark-700 transition transform hover:-translate-y-1 inline-block"><i class="fab fa-facebook-f"></i></a>
     <a href="#" class="w-10 h-10 rounded-lg bg-dark-900 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-dark-700 transition transform hover:-translate-y-1 inline-block"><i class="fab fa-youtube"></i></a>
 </div>
              </div>
@@ -5875,6 +6173,383 @@ document.addEventListener('keydown', function(event) {
         return false;
     }
 });
+
+// ==========================================================================
+// 5. احتفالية 20 ألف متابع وعام كامل - Cairo SciVerse (20K Celebration System)
+// ==========================================================================
+
+(function() {
+    // ----------------------------------------------------------------------
+    // A. شريط الإعلان العلوي: أنيميشن المربعات الخضراء والسوداء (Canvas)
+    // ----------------------------------------------------------------------
+    function initCelebrationSquaresCanvas() {
+        const canvas = document.getElementById('celebration-squares-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let width = 0;
+        let height = 0;
+        let animationFrameId = null;
+        let squares = [];
+
+        const colors = [
+            'rgba(34, 197, 94, 0.85)',   // cuGreen 500
+            'rgba(74, 222, 128, 0.9)',   // cuGreen 400
+            'rgba(16, 185, 129, 0.8)',   // Emerald
+            'rgba(234, 179, 8, 0.85)',   // Gold
+            'rgba(10, 30, 15, 0.95)',    // Dark Forest Black
+            'rgba(3, 15, 6, 0.95)',      // Deep Onyx Black
+            'rgba(52, 211, 153, 0.75)'   // Mint green
+        ];
+
+        function resizeCanvas() {
+            const banner = document.getElementById('celebration-top-banner');
+            if (!banner || banner.offsetParent === null) return;
+            const rect = banner.getBoundingClientRect();
+            width = canvas.width = rect.width;
+            height = canvas.height = Math.max(rect.height, 48);
+            generateSquares();
+        }
+
+        function generateSquares() {
+            squares = [];
+            const count = Math.min(Math.floor(width / 22), 65);
+            for (let i = 0; i < count; i++) {
+                const size = Math.floor(Math.random() * 12) + 6;
+                const isGreen = Math.random() > 0.35;
+                squares.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: size,
+                    vx: (Math.random() - 0.5) * 0.7,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    rot: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.03,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    isGreen: isGreen,
+                    pulse: Math.random() * Math.PI * 2,
+                    pulseSpeed: 0.03 + Math.random() * 0.03
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // رسم خطوط اتصال هندسية بين المربعات المتقاربة
+            for (let i = 0; i < squares.length; i++) {
+                for (let j = i + 1; j < squares.length; j++) {
+                    const dx = squares[i].x - squares[j].x;
+                    const dy = squares[i].y - squares[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 75) {
+                        const alpha = (1 - dist / 75) * 0.28;
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(34, 197, 94, ${alpha})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(squares[i].x, squares[i].y);
+                        ctx.lineTo(squares[j].x, squares[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // رسم وتحريك كل مربع
+            for (let i = 0; i < squares.length; i++) {
+                const sq = squares[i];
+                sq.x += sq.vx;
+                sq.y += sq.vy;
+                sq.rot += sq.rotSpeed;
+                sq.pulse += sq.pulseSpeed;
+
+                // الالتفاف حول حدود الكانفاس
+                if (sq.x < -20) sq.x = width + 20;
+                if (sq.x > width + 20) sq.x = -20;
+                if (sq.y < -20) sq.y = height + 20;
+                if (sq.y > height + 20) sq.y = -20;
+
+                const currentScale = 1 + Math.sin(sq.pulse) * 0.15;
+                const currentSize = sq.size * currentScale;
+
+                ctx.save();
+                ctx.translate(sq.x, sq.y);
+                ctx.rotate(sq.rot);
+
+                ctx.fillStyle = sq.color;
+                ctx.fillRect(-currentSize / 2, -currentSize / 2, currentSize, currentSize);
+
+                // إطار مضيء خفيف
+                ctx.strokeStyle = sq.isGreen ? 'rgba(74, 222, 128, 0.6)' : 'rgba(34, 197, 94, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(-currentSize / 2, -currentSize / 2, currentSize, currentSize);
+
+                ctx.restore();
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animate();
+    }
+
+    // ----------------------------------------------------------------------
+    // B. إخفاء الشريط العلوي والاحتفاظ بالحالة
+    // ----------------------------------------------------------------------
+    window.dismissCelebrationBanner = function() {
+        const banner = document.getElementById('celebration-top-banner');
+        if (!banner) return;
+        banner.style.transition = 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease';
+        banner.style.maxHeight = banner.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+            banner.style.maxHeight = '0px';
+            banner.style.opacity = '0';
+            banner.style.paddingTop = '0';
+            banner.style.paddingBottom = '0';
+            banner.style.overflow = 'hidden';
+        });
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 420);
+        sessionStorage.setItem('sciverse_banner_dismissed_20k', 'true');
+    };
+
+    // التحقق من حالة إخفاء الشريط في الجلسة
+    if (sessionStorage.getItem('sciverse_banner_dismissed_20k') === 'true') {
+        const banner = document.getElementById('celebration-top-banner');
+        if (banner) banner.style.display = 'none';
+    }
+
+    // ----------------------------------------------------------------------
+    // C. النافذة المنبثقة للاحتفال (تظهر مرة واحدة فقط ولا تتكرر عند الريفريش)
+    // ----------------------------------------------------------------------
+    const POPUP_STORAGE_KEY = 'sciverse_20k_popup_seen_v1';
+
+    window.openCelebrationPopup = function() {
+        const modal = document.getElementById('celebration-popup-modal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.add('modal-active');
+        });
+        // إطلاق قصاصات الاحتفال عند فتح النافذة
+        triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.35, 60);
+    };
+
+    window.closeCelebrationPopup = function() {
+        const modal = document.getElementById('celebration-popup-modal');
+        if (!modal) return;
+        modal.classList.remove('modal-active');
+        localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 360);
+        // إطلاق احتفال خفيف عند الإغلاق وبدء التصفح
+        triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.5, 40);
+    };
+
+    // إغلاق النافذة عند الضغط على الخلفية الشفافة
+    const celebrationModal = document.getElementById('celebration-popup-modal');
+    if (celebrationModal) {
+        celebrationModal.addEventListener('click', function(e) {
+            if (e.target === celebrationModal) {
+                closeCelebrationPopup();
+            }
+        });
+    }
+
+    // فحص الظهور لأول مرة: بعد ثانية واحدة من فتح الموقع، ولا تظهر مجدداً بعد الريفريش
+    function checkAndShowCelebrationPopup() {
+        const hasSeen = localStorage.getItem(POPUP_STORAGE_KEY);
+        if (!hasSeen) {
+            setTimeout(() => {
+                openCelebrationPopup();
+            }, 1000); // تظهر بعد ثانية واحدة تماماً من فتح الموقع
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // D. البلالين الاحتفالية الطافية فوق الموقع لمدة 5 ثوانٍ
+    // ----------------------------------------------------------------------
+    let balloonSpawnInterval = null;
+    let balloonTimeout = null;
+
+    const balloonThemes = [
+        {
+            bg: 'radial-gradient(circle at 35% 30%, #4ade80 0%, #22c55e 50%, #15803d 85%, #052e16 100%)',
+            border: '#22c55e',
+            label: '20K'
+        },
+        {
+            bg: 'radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 50%, #ca8a04 85%, #713f12 100%)',
+            border: '#eab308',
+            label: '🎉'
+        },
+        {
+            bg: 'radial-gradient(circle at 35% 30%, #22c55e 0%, #0d2c16 35%, #05140b 70%, #000000 100%)',
+            border: '#16a34a',
+            label: 'SciVerse'
+        },
+        {
+            bg: 'radial-gradient(circle at 35% 30%, #67e8f9 0%, #06b6d4 50%, #0e7490 85%, #164e63 100%)',
+            border: '#06b6d4',
+            label: '💚'
+        },
+        {
+            bg: 'radial-gradient(circle at 35% 30%, #bef264 0%, #84cc16 50%, #4d7c0f 85%, #1a2e05 100%)',
+            border: '#84cc16',
+            label: '🌟'
+        },
+        {
+            bg: 'radial-gradient(circle at 35% 30%, #86efac 0%, #10b981 50%, #047857 85%, #022c22 100%)',
+            border: '#10b981',
+            label: '20,000'
+        }
+    ];
+
+    function createBalloon() {
+        const container = document.getElementById('celebration-balloons-container');
+        if (!container) return;
+
+        // توليد البالون بحجم وحركة سريعة وديناميكية لتجري فوق شاشة الموقع
+        const theme = balloonThemes[Math.floor(Math.random() * balloonThemes.length)];
+        const size = Math.floor(Math.random() * 24) + 48; // 48px to 72px
+        const leftPercent = Math.random() * 92 + 4; // 4% to 96%
+        const duration = Math.random() * 1.5 + 3.8; // 3.8s إلى 5.3s لتجري بسرعة وانسيابية فوق الموقع
+        const driftX = (Math.random() * 70 + 25) * (Math.random() > 0.5 ? 1 : -1);
+        const swayDuration = Math.random() * 1.2 + 1.8;
+        const swayAngle = (Math.random() * 8 + 4) * (Math.random() > 0.5 ? 1 : -1);
+
+        const balloonEl = document.createElement('div');
+        balloonEl.className = 'celebration-balloon';
+        balloonEl.style.setProperty('--b-size', `${size}px`);
+        balloonEl.style.setProperty('--drift-x', `${driftX}px`);
+        balloonEl.style.left = `${leftPercent}%`;
+        balloonEl.style.animation = `balloonRise ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
+
+        balloonEl.innerHTML = `
+            <div class="balloon-inner" style="animation: balloonSway ${swayDuration}s ease-in-out infinite alternate;">
+                <div class="balloon-shape" style="background: ${theme.bg};">
+                    <div class="balloon-gloss"></div>
+                    <span class="balloon-label">${theme.label}</span>
+                </div>
+                <div class="balloon-knot-shape" style="background: ${theme.border};"></div>
+                <svg class="balloon-string-svg" viewBox="0 0 16 75">
+                    <path d="M8,0 Q13,20 8,38 T8,75" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" />
+                </svg>
+            </div>
+        `;
+
+        // تفاعل النقر لفرقعة البالون
+        balloonEl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            popBalloon(balloonEl, e.clientX, e.clientY, theme.border);
+        });
+
+        // إزالة البالون بعد انتهاء مسار الطيران
+        balloonEl.addEventListener('animationend', function() {
+            if (balloonEl.parentNode) {
+                balloonEl.parentNode.removeChild(balloonEl);
+            }
+        });
+
+        container.appendChild(balloonEl);
+    }
+
+    function popBalloon(balloonEl, clickX, clickY, color) {
+        balloonEl.classList.add('balloon-popped');
+        triggerCelebrationConfetti(clickX, clickY, 16, color);
+        setTimeout(() => {
+            if (balloonEl.parentNode) {
+                balloonEl.parentNode.removeChild(balloonEl);
+            }
+        }, 220);
+    }
+
+    // إطلاق البلالين لتجري فوق الموقع لمدة 5 ثوانٍ
+    window.launchBalloonsBurst = function(manual = false) {
+        if (balloonSpawnInterval) clearInterval(balloonSpawnInterval);
+        if (balloonTimeout) clearTimeout(balloonTimeout);
+
+        const btnText = document.getElementById('balloons-toggle-text');
+        if (btnText) btnText.textContent = 'جاري الاحتفال 🎉';
+
+        // إطلاق دفعة فورية من البلالين
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createBalloon, i * 160);
+        }
+
+        // إطلاق بلالين متتابعة سريعة
+        balloonSpawnInterval = setInterval(createBalloon, 320);
+
+        // إيقاف إطلاق البلالين تماماً بعد 5 ثوانٍ
+        balloonTimeout = setTimeout(() => {
+            clearInterval(balloonSpawnInterval);
+            balloonSpawnInterval = null;
+            if (btnText) btnText.textContent = 'أطلق البلالين';
+        }, 5000);
+
+        if (manual) {
+            triggerCelebrationConfetti(window.innerWidth / 2, window.innerHeight * 0.4, 30);
+        }
+    };
+
+    // ----------------------------------------------------------------------
+    // E. مولد قصاصات الاحتفال الملونة (Celebration Confetti Generator)
+    // ----------------------------------------------------------------------
+    function triggerCelebrationConfetti(originX, originY, count = 35, explicitColor = null) {
+        const confettiColors = ['#22c55e', '#4ade80', '#eab308', '#facc15', '#38bdf8', '#ffffff', '#10b981'];
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'celebration-spark';
+            const color = explicitColor || confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            const size = Math.floor(Math.random() * 7) + 5;
+            const isCircle = Math.random() > 0.5;
+
+            particle.style.width = `${size}px`;
+            particle.style.height = `${isCircle ? size : size * 1.5}px`;
+            particle.style.backgroundColor = color;
+            particle.style.borderRadius = isCircle ? '50%' : '2px';
+            particle.style.left = `${originX}px`;
+            particle.style.top = `${originY}px`;
+
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 120 + 50;
+            const targetX = Math.cos(angle) * velocity;
+            const targetY = Math.sin(angle) * velocity + 80;
+            const rotation = Math.random() * 720 - 360;
+
+            document.body.appendChild(particle);
+
+            particle.animate([
+                { transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
+                { transform: `translate(${targetX}px, ${targetY}px) scale(0) rotate(${rotation}deg)`, opacity: 0 }
+            ], {
+                duration: 900 + Math.random() * 500,
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+            }).onfinish = () => {
+                if (particle.parentNode) particle.parentNode.removeChild(particle);
+            };
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // F. بدء تشغيل الأنظمة عند تحميل الصفحة
+    // ----------------------------------------------------------------------
+    function initCelebration() {
+        initCelebrationSquaresCanvas();
+        checkAndShowCelebrationPopup(); // يظهر بعد ثانية واحدة لمرة واحدة
+        launchBalloonsBurst(false);     // تجري فوق الموقع لمدة 5 ثوانٍ
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCelebration);
+    } else {
+        initCelebration();
+    }
+})();
     </script>
 </body>
 </html>
