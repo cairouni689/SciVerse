@@ -1133,55 +1133,6 @@
             </div>
         </section>
 
-<section class="py-16 container mx-auto px-4">
-            <div class="grid grid-cols-1 grid-rows-1 h-auto">
-                
-                <div id="card-dean" class="col-start-1 row-start-1 purple-glow-box relative bg-gradient-to-r from-dark-800 to-dark-900 rounded-2xl p-8 md:p-12 overflow-hidden flex flex-col md:flex-row items-center gap-8 md:gap-12 transition-opacity duration-1000 opacity-100 z-10">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-cuPurple-glow opacity-20 rounded-full -mr-16 -mt-16 blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-cuGreen-500 opacity-10 rounded-full -ml-16 -mb-16 blur-xl"></div>
-                    
-                    <div class="relative group flex-shrink-0">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-cuGold-500 to-cuPurple-glow rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                        <div class="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-dark-800 shadow-2xl bg-dark-900 flex items-center justify-center">
-                            <img src="https://i.postimg.cc/SN8cz3XS/tnzyl.jpg" alt="أ.د. سهير رمضان فهمي" class="w-full h-full object-contain">
-                        </div>
-                    </div>
-
-                    <div class="text-center md:text-right flex-1 z-10">
-                        <h3 class="text-cuGold-500 font-bold text-lg mb-2 uppercase tracking-wide">رسالة شكر وتقدير</h3>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">الأستاذة الدكتورة / سهير رمضان فهمي</h2>
-                        <p class="text-cuGreen-400 font-semibold text-xl mb-6">عميد كلية العلوم - جامعة القاهرة</p>
-                        <p class="text-gray-300 leading-relaxed mb-6 text-lg">
-                            يتقدم فريق Cairo SciVerse وجميع طلاب الكلية بخالص الشكر والتقدير لسيادتكم على جهودكم العظيمة وتفانيكم المستمر في خدمة الصرح التعليمي، ودعمكم الدائم للطلاب والباحثين للارتقاء بمستوى الكلية لتظل دائماً منارة للعلم والعلماء.
-                        </p>
-                        <div class="h-1 w-24 bg-gradient-to-r from-cuGold-500 to-cuPurple-glow mx-auto md:mx-0 rounded"></div>
-                    </div>
-                </div>
-
-                <div id="card-vicedean" class="col-start-1 row-start-1 green-glow-box relative bg-gradient-to-r from-dark-800 to-dark-900 rounded-2xl p-8 md:p-12 overflow-hidden flex flex-col md:flex-row items-center gap-8 md:gap-12 transition-opacity duration-1000 opacity-0 z-0">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-20 rounded-full -mr-16 -mt-16 blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-cuGold-500 opacity-10 rounded-full -ml-16 -mb-16 blur-xl"></div>
-                    
-                    <div class="relative group flex-shrink-0">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cuGreen-500 rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                        <div class="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-dark-800 shadow-2xl bg-dark-900 flex items-center justify-center">
-                            <img src="https://i.postimg.cc/vBdRh4jv/photo-2026-02-06-18-06-12.jpg" alt="أ.د. مها الخازندار" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-
-                    <div class="text-center md:text-right flex-1 z-10">
-                        <h3 class="text-blue-400 font-bold text-lg mb-2 uppercase tracking-wide">شكر وعرفان</h3>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">الأستاذة الدكتورة / مها الخازندار</h2>
-                        <p class="text-cuGold-500 font-semibold text-xl mb-6">وكيل الكلية لشؤون التعليم والطلاب</p>
-                        <p class="text-gray-300 leading-relaxed mb-6 text-lg">
-                            نتقدم بأسمى آيات الشكر والامتنان لسيادتكم على جهودكم الدؤوبة في رعاية أبنائكم الطلاب، وحرصكم الدائم على تذليل كافة العقبات وتطوير المنظومة التعليمية، مما كان له بالغ الأثر في خلق بيئة أكاديمية متميزة وداعمة للجميع.
-                        </p>
-                        <div class="h-1 w-24 bg-gradient-to-r from-blue-500 to-cuGreen-500 mx-auto md:mx-0 rounded"></div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
         <footer id="map" class="bg-black text-gray-400 pt-16 border-t-4 border-cuGreen-600">
             <div class="container mx-auto px-4 pb-8">
                 <div class="text-center mb-8">
@@ -4387,8 +4338,6 @@ window.addEventListener('load', () => {
     // 2. التحقق من تسجيل الدخول
     checkUserSession();
 
-    // 3. تشغيل سلايدر التقدير (العميد والوكيل)
-    startAppreciationSlider();
 
     // 4. رسم الأقسام (باستخدام القوائم الثابتة اللي عندك في الكود)
     renderDepartments('departments-list-container', departments, false);
@@ -4400,7 +4349,6 @@ window.addEventListener('load', () => {
     // 6. تشغيل الاستماع اللحظي (عشان أي تعديل في الداش بورد يوصل هنا فوراً)
     setupRealtimeListener();
 });
-        startAppreciationSlider();
 
         // --- HELPER FUNCTION: Get Icon based on Subject Code Letter ---
         function getIconByCode(code) {
@@ -4991,8 +4939,6 @@ window.addEventListener('load', async () => {
     // 2. التحقق من تسجيل الدخول
     if (typeof checkUserSession === 'function') checkUserSession();
 
-    // 3. تشغيل سلايدر التقدير (العميد والوكيل)
-    if (typeof startAppreciationSlider === 'function') startAppreciationSlider();
 
     // 4. تشغيل عداد الأرقام الجديد (الشهادات والجوائز) 🚀
     if (typeof startStatsObserver === 'function') startStatsObserver();
@@ -5360,36 +5306,6 @@ function calculateGpaResult() {
         }
     }
 }
-
-function startAppreciationSlider() {
-            const card1 = document.getElementById('card-dean');
-            const card2 = document.getElementById('card-vicedean');
-            
-            if (!card1 || !card2) return;
-
-            let isDeanActive = true;
-
-            setInterval(() => {
-                if (isDeanActive) {
-                    // Hide Dean Card
-                    card1.classList.remove('opacity-100', 'z-10');
-                    card1.classList.add('opacity-0', 'z-0');
-                    
-                    // Show Vice Dean Card
-                    card2.classList.remove('opacity-0', 'z-0');
-                    card2.classList.add('opacity-100', 'z-10');
-                } else {
-                    // Hide Vice Dean Card
-                    card2.classList.remove('opacity-100', 'z-10');
-                    card2.classList.add('opacity-0', 'z-0');
-                    
-                    // Show Dean Card
-                    card1.classList.remove('opacity-0', 'z-0');
-                    card1.classList.add('opacity-100', 'z-10');
-                }
-                isDeanActive = !isDeanActive;
-            }, 5000); // 5000ms = 5 seconds
-        }
 
 // ============================================
 // الدالة الكاملة والمعدلة لجلب وعرض الكويزات للطلاب (مع دعم الفيديو)
