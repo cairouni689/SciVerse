@@ -444,6 +444,9 @@
             <a href="javascript:void(0)" onclick="toggleMobileMenu(); showToolsPage()" class="menu-item block p-3 rounded hover:bg-dark-700 text-gray-200 hover:text-cuGreen-400 font-semibold transition group" style="transition-delay: 300ms;">
                 <span class="inline-flex w-8 h-8 items-center justify-center rounded-lg bg-dark-900 group-hover:bg-cuGreen-900/50 ml-2 transition-colors"><i class="fas fa-tools"></i></span> الادوات
             </a>
+            <a href="javascript:void(0)" onclick="toggleMobileMenu(); showVirtualLabsPage()" class="menu-item block p-3 rounded hover:bg-dark-700 text-gray-200 hover:text-blue-400 font-semibold transition group" style="transition-delay: 310ms;">
+                <span class="inline-flex w-8 h-8 items-center justify-center rounded-lg bg-dark-900 group-hover:bg-blue-900/50 ml-2 transition-colors"><i class="fas fa-microscope text-blue-400"></i></span> المعامل الافتراضية
+            </a>
             <a href="javascript:void(0)" onclick="toggleMobileMenu(); showGpaPage()" class="menu-item block p-3 rounded hover:bg-dark-700 text-gray-200 hover:text-cuGreen-400 font-semibold transition group" style="transition-delay: 325ms;">
                 <span class="inline-flex w-8 h-8 items-center justify-center rounded-lg bg-dark-900 group-hover:bg-cuGreen-900/50 ml-2 transition-colors"><i class="fas fa-calculator"></i></span> حساب الـ GPA
             </a>
@@ -1033,8 +1036,8 @@
                         <i class="fas fa-graduation-cap ml-2 group-hover:rotate-12 transition-transform"></i> General
                     </button>
                    <button onclick="showSpecializedYears()" class="bg-transparent border-2 border-white hover:bg-white hover:text-black text-white font-bold py-3 px-8 rounded-full transition flex items-center justify-center gap-2 backdrop-blur-sm">
-    <i class="fas fa-dna"></i> البرامج النوعية المتخصصه
-</button>
+                        <i class="fas fa-dna"></i> البرامج النوعية المتخصصه
+                    </button>
                 </div>
             </div>
             <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
@@ -1676,6 +1679,23 @@
                         بما إنكم سألتو كتير عن الأدوات، تعالو نبدأ سوا بالأدوات الضرورية اللي هيحتاجها كل طلاب سنة أولى سواء كانو رياضة أو علوم.
                     </p>
                 </div>
+
+<!-- بانر المعامل الافتراضية الجديد -->
+                <div class="bg-gradient-to-l from-blue-900/40 to-dark-800 border border-blue-500/30 rounded-3xl p-8 md:p-12 shadow-[0_0_30px_rgba(59,130,246,0.15)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 group">
+                    <div class="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+                    <div class="relative z-10 md:w-2/3 text-center md:text-right">
+                        <div class="inline-block bg-blue-500/20 text-blue-400 px-4 py-1.5 rounded-full text-sm font-bold mb-4 border border-blue-500/30">جديد وحصري 🔥</div>
+                        <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">المعامل الافتراضية (Virtual Labs)</h3>
+                        <p class="text-gray-300 text-lg leading-relaxed mb-6">طبق تجاربك العلمية (فيزياء، كيمياء) كأنك داخل المعمل الحقيقي! سحب وتركيب تفاعلي للأدوات لاستيعاب المنهج العملي بسهولة.</p>
+                        <button onclick="showVirtualLabsPage()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-3 mx-auto md:mx-0">
+                            <i class="fas fa-microscope text-xl"></i> دخول المعامل الآن
+                        </button>
+                    </div>
+                    <div class="relative z-10 w-40 h-40 flex items-center justify-center bg-dark-900 rounded-full border-4 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.4)] group-hover:scale-105 transition-transform duration-500">
+                        <i class="fas fa-atom text-6xl text-blue-400 group-hover:rotate-180 transition-transform duration-1000"></i>
+                    </div>
+                </div>
+
                 <div>
                     <h3 class="text-2xl font-bold text-white mb-8 border-r-4 border-cuGreen-500 pr-4 flex items-center gap-3">
                         <i class="fas fa-tools text-cuGold-500"></i> الأدوات الأساسية (لكل الطلبة)
@@ -1827,6 +1847,133 @@
             </div>
     </div>
     <div class="w-full text-center text-gray-600 text-sm py-6 bg-dark-900 border-t border-gray-800 relative z-10">© 2026 Cairo SciVerse</div>
+</div>
+
+<!-- شاشة اختيار المعامل الافتراضية -->
+<div id="virtual-labs-view" class="hidden opacity-0 transition-opacity duration-500 min-h-screen bg-dark-900 relative flex flex-col justify-between">
+    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#3b82f6 1px, transparent 1px); background-size: 30px 30px;"></div>
+    
+    <div class="container mx-auto px-4 relative z-10 flex-grow pt-10 pb-16">
+        <div class="flex justify-between items-center mb-10 animate-fade-up">
+            <div>
+                <h2 class="text-3xl font-bold text-white mb-2">المعامل الافتراضية 🔬</h2>
+                <p class="text-blue-400 text-lg">طبق تجاربك العلمية كأنك داخل المعمل</p>
+            </div>
+            <button onclick="showHomePage()" class="bg-dark-800 border border-gray-600 hover:border-blue-500 text-white px-6 py-2 rounded-full transition flex items-center gap-2">
+                <span class="text-sm font-bold">الرئيسية</span> <i class="fas fa-home"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-fade-up delay-100 mt-10">
+            <!-- معمل الفيزياء -->
+            <div onclick="showPhysicsLab()" class="group bg-gradient-to-br from-dark-800 to-dark-900 p-10 rounded-3xl border-2 border-gray-700 hover:border-blue-500 cursor-pointer transition-all duration-500 hover:-translate-y-3 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+                <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center bg-dark-900 rounded-full border-4 border-blue-500/50 group-hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all">
+                    <i class="fas fa-atom text-5xl text-blue-400 group-hover:rotate-180 transition-transform duration-700"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-3">معمل الفيزياء</h3>
+                <p class="text-gray-400">تجارب ف101، الميكانيكا، والكهربية</p>
+                <div class="mt-6 inline-block bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-lg group-hover:bg-blue-500 transition-colors">
+                    دخول المعمل <i class="fas fa-arrow-left ml-1"></i>
+                </div>
+            </div>
+
+            <!-- معمل الكيمياء -->
+            <div onclick="comingSoonLab('الكيمياء')" class="group bg-gradient-to-br from-dark-800 to-dark-900 p-10 rounded-3xl border-2 border-gray-700 hover:border-gray-500 cursor-pointer transition-all duration-500 hover:-translate-y-3 shadow-xl text-center relative overflow-hidden opacity-80 hover:opacity-100">
+                <div class="absolute top-4 right-4 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg z-20 animate-pulse">
+                    <i class="fas fa-tools"></i> سيتوفر قريباً
+                </div>
+                <div class="absolute top-0 left-0 w-32 h-32 bg-green-500/5 rounded-full blur-3xl"></div>
+                <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center bg-dark-900 rounded-full border-4 border-gray-600 transition-all opacity-50 grayscale group-hover:grayscale-0">
+                    <i class="fas fa-flask text-5xl text-green-400"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-3 opacity-50">معمل الكيمياء</h3>
+                <p class="text-gray-500">تجارب المعايرة، الشقوق، والمحاليل</p>
+                <div class="mt-6 inline-block bg-dark-700 text-gray-400 px-6 py-2 rounded-full font-bold border border-gray-600">
+                    <i class="fas fa-lock ml-1"></i> مغلق حالياً
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-full text-center text-gray-600 text-sm py-6 bg-dark-900 border-t border-gray-800 relative z-10">© 2026 Cairo SciVerse</div>
+</div>
+
+<!-- شاشة تجارب معمل الفيزياء -->
+<div id="physics-lab-view" class="hidden opacity-0 transition-opacity duration-500 min-h-screen bg-dark-900 relative flex flex-col justify-between">
+    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#3b82f6 1px, transparent 1px); background-size: 30px 30px;"></div>
+    
+    <div class="container mx-auto px-4 relative z-10 flex-grow pt-10 pb-16">
+        <div class="flex justify-between items-center mb-10 animate-fade-up">
+            <div>
+                <h2 class="text-3xl font-bold text-white mb-2">معمل الفيزياء ⚛️</h2>
+                <p class="text-blue-400 text-lg">اختر التجربة للبدء</p>
+            </div>
+            <button onclick="showVirtualLabsPage()" class="bg-dark-800 border border-gray-600 hover:border-blue-500 text-white px-6 py-2 rounded-full transition flex items-center gap-2">
+                <span class="text-sm font-bold">رجوع</span> <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-up delay-100">
+            <!-- تجربة قانون أوم -->
+            <div onclick="openSimulation('https://phet.colorado.edu/sims/html/ohms-law/latest/ohms-law_ar.html', 'قانون أوم')" class="group bg-dark-800 p-6 rounded-2xl border border-gray-700 hover:border-blue-500 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] text-center">
+                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-blue-900/20 rounded-xl border border-blue-500/30">
+                    <i class="fas fa-bolt text-3xl text-blue-400 group-hover:animate-pulse"></i>
+                </div>
+                <h4 class="text-xl font-bold text-white mb-2">قانون أوم</h4>
+                <p class="text-sm text-gray-400">Ohm Law</p>
+            </div>
+
+            <!-- تجربة البندول البسيط -->
+            <div onclick="openSimulation('https://phet.colorado.edu/sims/html/pendulum-lab/latest/pendulum-lab_ar.html', 'البندول البسيط')" class="group bg-dark-800 p-6 rounded-2xl border border-gray-700 hover:border-purple-500 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] text-center">
+                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-purple-900/20 rounded-xl border border-purple-500/30">
+                    <i class="fas fa-clock text-3xl text-purple-400 group-hover:animate-spin-slow"></i>
+                </div>
+                <h4 class="text-xl font-bold text-white mb-2">البندول البسيط</h4>
+                <p class="text-sm text-gray-400">Pendulum Lab</p>
+            </div>
+
+            <!-- تجربة قانون هوك -->
+            <div onclick="openSimulation('https://phet.colorado.edu/sims/html/hookes-law/latest/hookes-law_ar.html', 'قانون هوك')" class="group bg-dark-800 p-6 rounded-2xl border border-gray-700 hover:border-green-500 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(34,197,94,0.2)] text-center">
+                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-green-900/20 rounded-xl border border-green-500/30">
+                    <i class="fas fa-compress-alt text-3xl text-green-400 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <h4 class="text-xl font-bold text-white mb-2">قانون هوك</h4>
+                <p class="text-sm text-gray-400">Hooke Law</p>
+            </div>
+
+            <!-- تجربة الدوائر الكهربية -->
+            <div onclick="openSimulation('https://phet.colorado.edu/sims/html/circuit-construction-kit-dc-virtual-lab/latest/circuit-construction-kit-dc-virtual-lab_ar.html', 'الدوائر الكهربية')" class="group bg-dark-800 p-6 rounded-2xl border border-gray-700 hover:border-yellow-500 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(234,179,8,0.2)] text-center">
+                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-yellow-900/20 rounded-xl border border-yellow-500/30">
+                    <i class="fas fa-plug text-3xl text-yellow-400 group-hover:rotate-12 transition-transform"></i>
+                </div>
+                <h4 class="text-xl font-bold text-white mb-2">الدوائر الكهربية</h4>
+                <p class="text-sm text-gray-400">DC Virtual Lab</p>
+            </div>
+        </div>
+    </div>
+    <div class="w-full text-center text-gray-600 text-sm py-6 bg-dark-900 border-t border-gray-800 relative z-10">© 2026 Cairo SciVerse</div>
+</div>
+
+<!-- نافذة تشغيل المعمل الافتراضي (Simulation Modal) -->
+<div id="sim-modal" class="fixed inset-0 bg-black/95 z-[200] hidden flex-col transition-opacity duration-300 opacity-0">
+    <div class="flex justify-between items-center p-4 bg-dark-900 border-b border-gray-700 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-500/20 flex items-center justify-center rounded-lg border border-blue-500/50">
+                <i class="fas fa-flask text-blue-400 animate-pulse"></i>
+            </div>
+            <h3 id="sim-title" class="text-xl font-bold text-white font-sans tracking-wide">جاري التحميل...</h3>
+        </div>
+        <button onclick="closeSimulation()" class="bg-red-600/20 hover:bg-red-600 border border-red-500/50 hover:border-red-500 text-red-400 hover:text-white px-5 py-2 rounded-lg font-bold transition-all flex items-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+            إنهاء التجربة <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="flex-grow w-full h-full relative bg-dark-800 flex items-center justify-center">
+        <div id="sim-loader" class="absolute inset-0 flex flex-col items-center justify-center z-0">
+            <i class="fas fa-circle-notch fa-spin text-5xl text-blue-500 mb-4"></i>
+            <p class="text-gray-400 text-lg font-bold">جاري تجهيز المعمل لك...</p>
+        </div>
+        <iframe id="sim-iframe" src="" class="w-full h-full border-0 relative z-10 opacity-0 transition-opacity duration-1000" allowfullscreen></iframe>
+    </div>
 </div>
 
     <div id="history-view" class="hidden opacity-0 transition-opacity duration-500 min-h-screen bg-dark-900 relative flex flex-col justify-between">
@@ -4306,7 +4453,8 @@ async function fetchUserResults() {
             get: () => _lastSelectedSubjectCategory,
             set: (val) => { _lastSelectedSubjectCategory = val; sessionStorage.setItem("lastSelectedSubjectCategory", val); }
         });
-const ALL_VIEWS = [
+
+        const ALL_VIEWS = [
     'main-view',
     'profile-view',
     'bachelor-view',
@@ -4328,7 +4476,9 @@ const ALL_VIEWS = [
     'ai-view',
     'ai-tools-view',
     'quizzes-view',
-    'active-quiz-view'  // <--- هذه هي الصفحة الجديدة الخاصة بالامتحان
+    'active-quiz-view',
+    'virtual-labs-view', // <-- شاشة اختيار المعامل
+    'physics-lab-view'   // <-- شاشة معمل الفيزياء
 ];
 
 // تشغيل كل شيء عند فتح الموقع
@@ -4570,6 +4720,61 @@ function showAiPage() {
             lastSelectedYear = 'الفرقة الأولى';
             switchView('year1-view');
         }
+
+        function showVirtualLabsPage() {
+            switchView('virtual-labs-view');
+        }
+
+        function showPhysicsLab() {
+            switchView('physics-lab-view');
+        }
+
+        function comingSoonLab(labName) {
+            Swal.fire({
+                title: 'قريباً إن شاء الله ⏳',
+                text: `معمل ${labName} قيد التجهيز حالياً وهيكون متاح قريباً جداً!`,
+                icon: 'info',
+                background: '#1e293b',
+                color: '#fff',
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'حسناً'
+            });
+        }
+
+        function openSimulation(url, title) {
+            const modal = document.getElementById('sim-modal');
+            const iframe = document.getElementById('sim-iframe');
+            const titleEl = document.getElementById('sim-title');
+            
+            // إظهار الشاشة
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            
+            titleEl.innerText = title;
+            iframe.style.opacity = '0'; // إخفاء الـ iframe لحد ما يحمل
+            iframe.src = url;
+            
+            // لما الـ iframe يحمل، نظهره ونخفي الأنيميشن
+            iframe.onload = () => {
+                iframe.style.opacity = '1';
+            };
+            
+            // منع السكرول في الموقع الخلفي
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeSimulation() {
+            const modal = document.getElementById('sim-modal');
+            const iframe = document.getElementById('sim-iframe');
+            
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                iframe.src = ""; // تفريغ الرابط عشان نقفل التجربة وماتسحبش نت أو رام
+                document.body.classList.remove('overflow-hidden');
+            }, 300);
+        }
+
  function showDeptSelection(yearName) {
             lastSelectedYear = yearName;
             const titleEl = document.getElementById('dept-select-title');
