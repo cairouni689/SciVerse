@@ -306,6 +306,32 @@
         </p>
     </div>
 </div>
+
+<!-- شاشة البحث السريع -->
+<div id="search-modal" class="fixed inset-0 bg-black/40 backdrop-blur-md z-[150] hidden flex flex-col items-center pt-24 px-4 transition-opacity duration-150 opacity-0">
+    <button onclick="toggleSearchModal()" class="absolute top-6 right-6 text-gray-500 hover:text-red-500 transition-colors bg-dark-800 hover:bg-red-500/20 p-3 rounded-full h-12 w-12 flex items-center justify-center group border border-transparent hover:border-red-500/30">
+        <i class="fas fa-times text-xl group-hover:rotate-90 transition-transform duration-300"></i>
+    </button>
+    
+    <div class="w-full max-w-3xl relative transform scale-95 transition-transform duration-300" id="search-box">
+        <div class="relative flex items-center">
+            <i class="fas fa-search absolute right-6 text-2xl text-gray-500"></i>
+            <input type="text" id="global-search-input" onkeyup="handleGlobalSearch(this.value)" placeholder="ابحث عن مادة، كود، أو قسم..." class="w-full bg-dark-900 border-2 border-gray-700 focus:border-cuGreen-500 rounded-2xl py-5 pr-16 pl-14 text-white text-xl md:text-2xl placeholder-gray-600 outline-none transition-colors shadow-[0_0_30px_rgba(0,0,0,0.5)] focus:shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+            <div id="search-spinner" class="absolute left-6 hidden">
+                <i class="fas fa-circle-notch fa-spin text-xl text-cuGreen-500"></i>
+            </div>
+        </div>
+        
+        <div id="search-results-container" class="mt-6 space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10">
+            <!-- هنا هتظهر النتائج -->
+            <div class="text-center py-12 text-gray-500 flex flex-col items-center gap-4">
+                <i class="fas fa-keyboard text-5xl opacity-20"></i>
+                <p class="text-lg">اكتب اسم المادة، كود المادة، أو اسم القسم للبحث السريع</p>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div id="toast" class="fixed top-24 left-5 bg-dark-800 shadow-xl rounded-lg p-4 border-r-4 border-cuGreen-500 transform translate-x-full transition-transform duration-300 z-[80] flex items-center gap-3 hidden text-white">
         <i class="fas fa-check-circle text-cuGreen-500 text-xl"></i>
         <div>
@@ -367,6 +393,11 @@
                 </a>
 
               <div class="flex items-center gap-3">
+
+    <!-- زر البحث الجديد -->
+    <button onclick="toggleSearchModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-dark-900 border border-gray-700 text-gray-400 hover:text-cuGreen-400 hover:border-cuGreen-500 transition-all shadow-lg hover:shadow-cuGreen-500/20" title="بحث سريع (Ctrl+K)">
+        <i class="fas fa-search"></i>
+    </button>
     
     <button id="auth-btn" onclick="toggleLoginModal()" class="bg-cuGreen-600 hover:bg-cuGreen-700 text-white px-4 py-2 rounded-full font-bold text-sm transition flex items-center gap-2 shadow-lg hover:shadow-cuGreen-500/30">
         <i class="fas fa-sign-in-alt"></i> <span class="hidden md:inline">دخول</span>
@@ -5875,12 +5906,165 @@ document.addEventListener('keydown', function(event) {
         return false;
     }
     
+    // فتح البحث باختصار Ctrl+K أو Cmd+K
+    if ((event.ctrlKey || event.metaKey) && (event.keyCode === 75 || event.key.toLowerCase() === 'k')) {
+        event.preventDefault();
+        toggleSearchModal();
+        return false;
+    }
+
     // منع Ctrl+S أو Cmd+S (حفظ الصفحة)
     if ((event.ctrlKey || event.metaKey) && (event.keyCode === 83 || event.key.toLowerCase() === 's')) {
         event.preventDefault();
         return false;
     }
 });
+
+// ==========================================
+// نظام البحث الشامل الذكي (Spotlight Search)
+// ==========================================
+let allSearchDataCache = null;
+
+function toggleSearchModal() {
+    const modal = document.getElementById('search-modal');
+    const box = document.getElementById('search-box');
+    const input = document.getElementById('global-search-input');
+    
+    if (modal.classList.contains('hidden')) {
+        // فتح البحث
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+            input.focus();
+        }, 10);
+        buildSearchCache(); // تجميع الداتا لو لسه متجمعتش
+    } else {
+        // إغلاق البحث
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            input.value = '';
+            document.getElementById('search-results-container').innerHTML = `
+            <div class="text-center py-12 text-gray-500 flex flex-col items-center gap-4">
+                <i class="fas fa-keyboard text-5xl opacity-20"></i>
+                <p class="text-lg">اكتب اسم المادة، كود المادة، أو اسم القسم للبحث السريع</p>
+            </div>`;
+        }, 100); // قللنا الوقت هنا لـ 100 عشان تقفل طلقة في لحظتها
+    }
+}
+
+async function buildSearchCache() {
+    if (allSearchDataCache !== null) return; // تم التجميع مسبقاً
+    
+    document.getElementById('search-spinner').classList.remove('hidden');
+    allSearchDataCache = [];
+
+    // 1. إضافة مواد الفرقة الأولى ومتطلبات الجامعة
+    const addStatic = (arr, context) => {
+        if(arr) arr.forEach(subj => {
+            allSearchDataCache.push({
+                name: subj.name,
+                code: subj.code || '',
+                link: subj.link || '',
+                context: context
+            });
+        });
+    };
+    
+    addStatic(semester1Subjects, 'الفرقة الأولى - ترم أول');
+    addStatic(semester2Subjects, 'الفرقة الأولى - ترم ثاني');
+    addStatic(uniRequirementsSubjects, 'متطلبات جامعة');
+
+    // 2. إضافة الأقسام العامة والبرامج المتخصصة
+    const processDeptObj = (deptObj, deptName) => {
+        for (let year in deptObj) {
+            let yearAr = (year === 'second_year' || year === 'level_2') ? 'الفرقة الثانية' :
+                         (year === 'third_year' || year === 'level_3') ? 'الفرقة الثالثة' : 'الفرقة الرابعة';
+            for (let term in deptObj[year]) {
+                let termAr = term === 'term_1' ? 'ترم 1' : 'ترم 2';
+                addStatic(deptObj[year][term], `${deptName} - ${yearAr} - ${termAr}`);
+            }
+        }
+    };
+
+    for (let dept in departmentCurricula) processDeptObj(departmentCurricula[dept], dept);
+    for (let prog in specializedCurricula) processDeptObj(specializedCurricula[prog], prog);
+
+    // 3. جلب المواد الديناميكية من الداتا بيز (Supabase)
+    const { data: dbSubjects } = await sb.from('subjects').select('*');
+    if (dbSubjects) {
+        dbSubjects.forEach(s => {
+            allSearchDataCache.push({
+                name: s.name,
+                code: s.code || '',
+                link: s.link || '',
+                context: `${s.department} - ${s.year_level} - ${s.term}`
+            });
+        });
+    }
+    
+    document.getElementById('search-spinner').classList.add('hidden');
+}
+
+function handleGlobalSearch(query) {
+    const container = document.getElementById('search-results-container');
+    const q = query.trim().toLowerCase();
+    
+    if (q.length === 0) {
+        container.innerHTML = `
+        <div class="text-center py-12 text-gray-500 flex flex-col items-center gap-4">
+            <i class="fas fa-keyboard text-5xl opacity-20"></i>
+            <p class="text-lg">اكتب اسم المادة، كود المادة، أو اسم القسم للبحث السريع</p>
+        </div>`;
+        return;
+    }
+
+    if (!allSearchDataCache) return;
+
+    // فلترة النتائج
+    const results = allSearchDataCache.filter(item => 
+        item.name.toLowerCase().includes(q) || 
+        item.code.toLowerCase().includes(q) || 
+        item.context.toLowerCase().includes(q)
+    ).slice(0, 15); // عرض أول 15 نتيجة فقط عشان السرعة
+
+    if (results.length === 0) {
+        container.innerHTML = `
+        <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-search-minus text-4xl mb-3 opacity-30"></i>
+            <p>لا يوجد نتائج مطابقة للبحث</p>
+        </div>`;
+        return;
+    }
+
+    // عرض النتائج
+    container.innerHTML = results.map(res => {
+        const hasLink = res.link && res.link.trim() !== "";
+        const targetBtn = hasLink 
+            ? `<a href="${res.link}" target="_blank" class="bg-cuGreen-600 hover:bg-cuGreen-500 text-white p-3 rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center justify-center group flex-shrink-0" title="الذهاب للداريف">
+                   <i class="fab fa-google-drive text-xl group-hover:animate-bounce"></i>
+               </a>`
+            : `<button disabled class="bg-dark-700 text-gray-500 p-3 rounded-xl cursor-not-allowed flex items-center justify-center flex-shrink-0" title="الرابط غير متوفر حالياً">
+                   <i class="fas fa-unlink text-xl"></i>
+               </button>`;
+               
+        return `
+        <div class="bg-dark-800 p-4 rounded-2xl border border-gray-700 hover:border-cuGreen-500 transition-colors flex items-center justify-between gap-4 shadow-md">
+            <div class="flex items-center gap-4 overflow-hidden">
+                <div class="w-12 h-12 bg-dark-900 rounded-xl flex items-center justify-center border border-gray-600 flex-shrink-0">
+                    <i class="fas ${getIconByCode(res.code)} text-gray-400 text-xl"></i>
+                </div>
+                <div class="truncate">
+                    <h4 class="text-white font-bold text-lg truncate">${res.name} ${res.code ? `<span class="text-xs text-cuGold-500 font-mono ml-2 border border-cuGold-500/30 px-1.5 rounded bg-dark-900">${res.code}</span>` : ''}</h4>
+                    <p class="text-xs text-gray-400 mt-1 truncate"><i class="fas fa-map-marker-alt text-cuGreen-400 ml-1"></i> ${res.context}</p>
+                </div>
+            </div>
+            ${targetBtn}
+        </div>`;
+    }).join('');
+}
     </script>
 </body>
 </html>
