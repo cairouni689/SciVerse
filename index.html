@@ -218,6 +218,90 @@
         @keyframes circularProgress {
             0% { stroke-dasharray: 0, 100; }
         }
+
+/* ================= Draggable Skill Tree Pro Max ================= */
+        #tree-workspace {
+            position: relative;
+            width: 3200px;
+            height: 2200px;
+            background-color: #050810;
+            background-image: 
+                linear-gradient(to right, rgba(168, 85, 247, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        #tree-workspace::before {
+            content: '';
+            position: absolute;
+            top: 20%; left: 30%; width: 1000px; height: 1000px;
+            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 60%);
+            filter: blur(50px);
+            pointer-events: none; z-index: 0;
+        }
+        #tree-workspace::after {
+            content: '';
+            position: absolute;
+            bottom: 20%; right: 20%; width: 1200px; height: 1200px;
+            background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 60%);
+            filter: blur(60px);
+            pointer-events: none; z-index: 0;
+        }
+
+        .tree-node-drag {
+            position: absolute;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, opacity 0.3s ease, border-color 0.25s ease;
+            background: rgba(15, 23, 42, 0.92);
+            border: 2px solid #334155;
+            backdrop-filter: blur(14px);
+            z-index: 10;
+        }
+        /* كلاس التفعيل بعد الضغط المطول */
+        .tree-node-drag.dragging-active {
+            cursor: grabbing !important;
+            transform: scale(1.05);
+            z-index: 50 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .info-panel {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+            transform: translate(-50%, 15px) scale(0.95);
+        }
+        .info-panel.show-panel {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: translate(-50%, 0) scale(1) !important;
+        }
+        .tree-node-drag.inactive {
+            opacity: 0.2;
+            filter: grayscale(80%) blur(0.5px);
+        }
+        .tree-node-drag.highlight {
+            z-index: 40;
+            transform: scale(1.06);
+            opacity: 1;
+            filter: none;
+        }
+        
+        .tree-line-svg {
+            fill: none;
+            stroke-linecap: round;
+            opacity: 0;
+            transition: opacity 0.35s ease, stroke-width 0.35s ease;
+        }
+        .tree-line-svg.active-line {
+            opacity: 0.95;
+            stroke-width: 3.5;
+            stroke-dasharray: 12, 8;
+            animation: flowLaser 1s linear infinite;
+        }
+        @keyframes flowLaser {
+            from { stroke-dashoffset: 40; }
+            to { stroke-dashoffset: 0; }
+        }
     </style>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -1003,12 +1087,25 @@
                 <p class="text-lg md:text-xl mb-10 text-gray-300 max-w-2xl mx-auto drop-shadow-md">
                     البوابة التعريفية - كلية العلوم جامعة القاهرة
                 </p>
-                <div class="flex flex-col md:flex-row gap-4 justify-center">
-                    <button onclick="showBachelorPage()" class="bg-cuGold-500 hover:bg-cuGold-600 text-black font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 border-2 border-cuGold-500 group">
-                        <i class="fas fa-graduation-cap ml-2 group-hover:rotate-12 transition-transform"></i> General
-                    </button>
-                   <button onclick="showSpecializedYears()" class="bg-transparent border-2 border-white hover:bg-white hover:text-black text-white font-bold py-3 px-8 rounded-full transition flex items-center justify-center gap-2 backdrop-blur-sm">
-                        <i class="fas fa-dna"></i> البرامج النوعية المتخصصه
+                <div class="flex flex-col items-center gap-4 max-w-2xl mx-auto w-full">
+                    <div class="flex flex-col md:flex-row gap-4 justify-center w-full">
+                        <button onclick="showBachelorPage()" class="flex-1 bg-cuGold-500 hover:bg-cuGold-600 text-black font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 border-2 border-cuGold-500 group flex justify-center items-center">
+                            <i class="fas fa-graduation-cap ml-2 group-hover:rotate-12 transition-transform"></i> General
+                        </button>
+                        <button onclick="showSpecializedYears()" class="flex-1 bg-transparent border-2 border-white hover:bg-white hover:text-black text-white font-bold py-3 px-8 rounded-full transition flex items-center justify-center gap-2 backdrop-blur-sm hover:scale-105">
+                            <i class="fas fa-dna"></i> البرامج النوعية
+                        </button>
+                    </div>
+                    
+                    <!-- زر شجرة الأقسام التفاعلية -->
+                    <button onclick="showSkillTree()" class="w-full relative group overflow-hidden bg-dark-900 border border-[#a855f7] hover:border-purple-400 text-white font-bold py-3.5 px-8 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition transform hover:scale-[1.02] flex items-center justify-center gap-3 mt-2">
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <i class="fas fa-project-diagram text-[#a855f7] text-2xl group-hover:rotate-12 transition-transform duration-500"></i>
+                        <span class="relative z-10 tracking-wide text-lg">شجرة الأقسام التفاعلية (Skill Tree)</span>
+                        <div class="absolute -top-1 -right-1 flex h-4 w-4">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-4 w-4 bg-purple-500"></span>
+                        </div>
                     </button>
                 </div>
             </div>
@@ -1946,6 +2043,39 @@
         </div>
         <iframe id="sim-iframe" src="" class="w-full h-full border-0 relative z-10 opacity-0 transition-opacity duration-1000" allowfullscreen></iframe>
     </div>
+</div>
+
+<!-- شاشة شجرة الأقسام التفاعلية (Draggable Skill Tree Pro Max) -->
+<div id="skill-tree-view" class="hidden opacity-0 transition-opacity duration-500 min-h-screen bg-dark-900 relative flex flex-col overflow-hidden">
+    
+    <!-- هيدر الشجرة -->
+    <div class="absolute top-0 left-0 w-full p-4 md:p-6 z-50 flex justify-between items-center bg-gradient-to-b from-dark-900 to-transparent pointer-events-none">
+        <div class="pointer-events-auto">
+            <h2 class="text-2xl md:text-4xl font-bold text-white mb-1 drop-shadow-lg">خريطة العباقرة التفاعلية 🌌</h2>
+            <p class="text-[#a855f7] text-sm md:text-lg font-mono bg-dark-900/50 px-3 py-1 rounded-full border border-purple-500/30">اسحب أي مادة، واكتشف المسار السري للأقسام!</p>
+        </div>
+        <div class="flex gap-3 pointer-events-auto">
+            <button onclick="resetTreeLayout()" class="bg-dark-800 border border-gray-600 hover:border-blue-500 text-white w-10 h-10 md:w-auto md:px-6 md:py-2 rounded-full transition flex items-center justify-center gap-2 shadow-lg">
+                <i class="fas fa-sync-alt"></i> <span class="hidden md:inline font-bold">إعادة ترتيب</span>
+            </button>
+            <button onclick="showHomePage()" class="bg-cuGold-600 hover:bg-cuGold-500 text-black w-10 h-10 md:w-auto md:px-6 md:py-2 rounded-full transition flex items-center justify-center gap-2 shadow-lg font-bold">
+                <i class="fas fa-home"></i> <span class="hidden md:inline">الرئيسية</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- مساحة العمل القابلة للسحب (Infinite Canvas) -->
+    <div class="w-full h-screen overflow-auto custom-scrollbar relative" id="tree-scroll-container" dir="rtl">
+        <div id="tree-workspace" class="absolute top-0 left-0 min-w-[3000px] min-h-[2000px]">
+            <!-- سيتم رسم الخطوط هنا -->
+            <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" id="tree-lines-container"></svg>
+            
+            <!-- سيتم توليد الكروت (المواد والأقسام) هنا بالجافاسكريبت -->
+            <div id="tree-nodes-container" class="absolute inset-0 w-full h-full"></div>
+        </div>
+    </div>
+
+    <!-- تم نقل صندوق الشرح ليظهر أسفل الكارت مباشرة -->
 </div>
 
     <div id="history-view" class="hidden opacity-0 transition-opacity duration-500 min-h-screen bg-dark-900 relative flex flex-col justify-between">
@@ -4449,8 +4579,9 @@ async function fetchUserResults() {
     'ai-tools-view',
     'quizzes-view',
     'active-quiz-view',
-    'virtual-labs-view', // <-- شاشة اختيار المعامل
-    'physics-lab-view'   // <-- شاشة معمل الفيزياء
+    'virtual-labs-view', 
+    'physics-lab-view',
+    'skill-tree-view'
 ];
 
 // تشغيل كل شيء عند فتح الموقع
@@ -6307,6 +6438,615 @@ function handleGlobalSearch(query) {
         </div>`;
     }).join('');
 }
+
+// ==========================================
+// نظام الخريطة التفاعلية (Cairo SciVerse Official Logic Pro Max)
+// ==========================================
+
+const treeItems = [
+    // --- مواد الترم الأول (t1) ---
+    { id: 'm1_chem', title: 'كيمياء ك101', type: 't1', icon: 'fa-flask', color: '#22c55e' },
+    { id: 'm1_phys', title: 'فيزياء ف101', type: 't1', icon: 'fa-atom', color: '#a855f7' },
+    { id: 'm1_zoo', title: 'حيوان ح101', type: 't1', icon: 'fa-frog', color: '#ec4899' },
+    { id: 'm1_bot', title: 'نبات ن101', type: 't1', icon: 'fa-leaf', color: '#10b981' },
+    { id: 'm1_alg', title: 'الجبر ر110', type: 't1', icon: 'fa-calculator', color: '#3b82f6' },
+    { id: 'm1_ast', title: 'فلك ل111', type: 't1', icon: 'fa-star', color: '#f59e0b' },
+    { id: 'm1_biop', title: 'بايوفيزياء بف111', type: 't1', icon: 'fa-heartbeat', color: '#ef4444' },
+    { id: 'm1_calc', title: 'التفاضل ر131', type: 't1', icon: 'fa-square-root-alt', color: '#3b82f6' },
+    { id: 'm1_ent', title: 'حشرات ش101', type: 't1', icon: 'fa-bug', color: '#84cc16' },
+    { id: 'm1_geo', title: 'جيولوجيا ج101', type: 't1', icon: 'fa-mountain', color: '#eab308' },
+    { id: 'm1_geop', title: 'جيوفيزياء جف101', type: 't1', icon: 'fa-globe-americas', color: '#d97706' },
+    { id: 'm1_stat', title: 'الإحصاء ص100', type: 't1', icon: 'fa-chart-bar', color: '#6366f1' },
+
+    // --- مواد الترم الثاني (t2) ---
+    { id: 'm2_chem', title: 'كيمياء ك102', type: 't2', icon: 'fa-flask', color: '#22c55e' },
+    { id: 'm2_phys', title: 'فيزياء ف102', type: 't2', icon: 'fa-atom', color: '#a855f7' },
+    { id: 'm2_int', title: 'التكامل ر132', type: 't2', icon: 'fa-infinity', color: '#3b82f6' },
+    { id: 'm2_java', title: 'جافا س101', type: 't2', icon: 'fa-laptop-code', color: '#0ea5e9' },
+    { id: 'm2_geo', title: 'جيولوجيا ج102', type: 't2', icon: 'fa-mountain', color: '#eab308' },
+    { id: 'm2_zoo', title: 'حيوان ح102', type: 't2', icon: 'fa-frog', color: '#ec4899' },
+    { id: 'm2_bot', title: 'نبات ن102', type: 't2', icon: 'fa-leaf', color: '#10b981' },
+    { id: 'm2_mech', title: 'ميكانيكا ر170', type: 't2', icon: 'fa-cogs', color: '#6366f1' },
+    { id: 'm2_ast', title: 'فلك ل112', type: 't2', icon: 'fa-star', color: '#f59e0b' },
+    { id: 'm2_biop', title: 'بايوفيزياء بف112', type: 't2', icon: 'fa-heartbeat', color: '#ef4444' },
+    { id: 'm2_geop', title: 'جيوفيزياء جف102', type: 't2', icon: 'fa-globe-americas', color: '#d97706' },
+    { id: 'm2_ent', title: 'حشرات ش102', type: 't2', icon: 'fa-bug', color: '#84cc16' },
+
+    // --- الأقسام المزدوجة (dept_d) ---
+    { id: 'd_math_stat', title: 'رياضيات/إحصاء', type: 'dept_d', icon: 'fa-chart-pie', color: '#3b82f6' },
+    { id: 'd_math_cs', title: 'رياضيات/علوم حاسب', type: 'dept_d', icon: 'fa-code', color: '#0ea5e9' },
+    { id: 'd_math_phys', title: 'رياضيات/فيزياء', type: 'dept_d', icon: 'fa-square-root-alt', color: '#8b5cf6' },
+    { id: 'd_phys_ast', title: 'فيزياء/فلك', type: 'dept_d', icon: 'fa-meteor', color: '#a855f7' },
+    { id: 'd_phys_atm', title: 'فيزياء/علوم جوية', type: 'dept_d', icon: 'fa-cloud', color: '#8b5cf6' },
+    { id: 'd_chem_phys', title: 'كيمياء/فيزياء', type: 'dept_d', icon: 'fa-vial', color: '#22c55e' },
+    { id: 'd_chem_bio', title: 'كيمياء/كيمياء حيوي', type: 'dept_d', icon: 'fa-dna', color: '#10b981' },
+    { id: 'd_chem_bot', title: 'كيمياء/نبات', type: 'dept_d', icon: 'fa-seedling', color: '#10b981' },
+    { id: 'd_chem_micro', title: 'كيمياء/ميكروبيولوجي', type: 'dept_d', icon: 'fa-microscope', color: '#10b981' },
+    { id: 'd_chem_zoo', title: 'كيمياء/حيوان', type: 'dept_d', icon: 'fa-paw', color: '#ec4899' },
+    { id: 'd_chem_geo', title: 'كيمياء/جيولوجيا', type: 'dept_d', icon: 'fa-gem', color: '#eab308' },
+    { id: 'd_chem_ent', title: 'كيمياء/حشرات', type: 'dept_d', icon: 'fa-spider', color: '#84cc16' },
+
+    // --- الأقسام المنفردة (dept_s) ---
+    { id: 'd_math', title: 'رياضيات منفرد', type: 'dept_s', icon: 'fa-calculator', color: '#3b82f6' },
+    { id: 'd_cs', title: 'علوم حاسب منفرد', type: 'dept_s', icon: 'fa-laptop-code', color: '#0ea5e9' },
+    { id: 'd_chem', title: 'كيمياء منفرد', type: 'dept_s', icon: 'fa-flask', color: '#22c55e' },
+    { id: 'd_geo', title: 'جيولوجيا منفرد', type: 'dept_s', icon: 'fa-mountain', color: '#eab308' },
+    { id: 'd_ast', title: 'علوم فضاء (فلك)', type: 'dept_s', icon: 'fa-star', color: '#f59e0b' },
+    { id: 'd_biop', title: 'بايوفيزياء منفرد', type: 'dept_s', icon: 'fa-heartbeat', color: '#ef4444' },
+    { id: 'd_geop', title: 'جيوفيزياء منفرد', type: 'dept_s', icon: 'fa-globe-americas', color: '#d97706' },
+    { id: 'd_phys', title: 'فيزياء منفرد', type: 'dept_s', icon: 'fa-atom', color: '#a855f7' }
+];
+
+// المتطلبات الرسمية من إدارة الكلية بناءً على الصور المرفقة
+const deptRequirements = {
+    'd_math': { req: ['m2_int', 'm1_alg', 'm2_mech'] }, // ر132 + ر110 + ر170
+    'd_cs': { req: ['m2_int', 'm1_alg', 'm2_java'] }, // ر132 + ر110 + س101
+    'd_math_stat': { req: ['m2_int', 'm1_alg', 'm1_stat'] }, // ر132 + ر110 + ص100
+    'd_math_cs': { req: ['m2_int', 'm1_alg', 'm2_java'] }, // ر132 + ر110 + س101
+    
+    'd_phys': { req: ['m1_phys', 'm2_phys', 'm2_int'] }, // ف101 + ف102 + ر132
+    'd_math_phys': { req: ['m1_calc', 'm1_phys', 'm2_phys'] }, // ر131 + ف101 + ف102
+    'd_phys_ast': { req: ['m1_ast', 'm2_ast', 'm1_phys', 'm2_phys', 'm1_calc'] }, // ل111 + ل112 + ف101 + ف102 + ر131
+    'd_phys_atm': { req: ['m2_ast', 'm1_phys', 'm2_phys', 'm1_calc'] }, // ل112 + ف101 + ف102 + ر131
+    'd_ast': { req: ['m1_alg', 'm1_ast', 'm2_ast'] }, // ر110 + ل111 + ل112
+
+    'd_chem': { req: ['m1_chem', 'm2_chem'] }, // ك101 + ك102
+    'd_chem_phys': { req: ['m1_chem', 'm2_chem', 'm1_phys', 'm2_phys', 'm1_calc'] }, // ك101 + ك102 + ف101 + ف102 + ر131
+    
+    'd_chem_bio': { req: ['m1_chem', 'm2_chem'] }, // ك101 + ك102
+    'd_chem_bot': { req: ['m1_chem', 'm2_chem', 'm1_bot', 'm2_bot'] }, // ك101 + ك102 + ن101 + ن102
+    'd_chem_micro': { req: ['m1_chem', 'm2_chem', 'm1_bot', 'm2_bot'] }, // ك101 + ك102 + ن101 + ن102
+    'd_chem_zoo': { req: ['m1_chem', 'm2_chem', 'm1_zoo', 'm2_zoo'] }, // ك101 + ك102 + ح101 + ح102
+    'd_chem_ent': { req: ['m1_chem', 'm2_chem', 'm1_ent', 'm2_ent'] }, // ك101 + ك102 + ش101 + ش102
+
+    'd_geo': { req: ['m1_geo', 'm2_geo'] }, // ج101 + ج102
+    'd_chem_geo': { req: ['m1_chem', 'm2_chem', 'm1_geo', 'm2_geo'] }, // ك101 + ك102 + ج101 + ج102
+    'd_geop': { req: ['m1_geop', 'm2_geop', 'm1_geo', 'm2_geo'] }, // جف101 + جف102 + ج101 + ج102
+    
+    'd_biop': { req: ['m1_biop', 'm2_biop', 'm1_zoo', 'm2_zoo'] } // بف111 + بف112 + ح101 + ح102
+};
+
+const deptInfoData = {
+    'd_math': { 
+        title: 'رياضيات منفرد', 
+        prereq: 'اجتياز (ر132 + ر110 + ر170) والحصول على تقدير جيد على الأقل في اثنين منهم.',
+        study: 'الرياضيات البحتة والتطبيقية، الجبر الخطي والمجرد، التحليل الحقيقي والمركب، المعادلات التفاضلية العادية والجزئية، التوبولوجيا، التحليل العددي والحوسبة الرياضية، ميكانيكا الموائع والأوساط المتصلة.', 
+        career: 'القطاع المالي والمصرفي وإدارة المخاطر، شركات التأمين الاكتواري، تحليل ونمذجة البيانات، مراكز البحوث العلمية والتطبيقية، تطوير الخوارزميات والبرمجة العلمية، التدريس الأكاديمي والمدارس الدولية.'
+    },
+    'd_cs': { 
+        title: 'علوم حاسب منفرد', 
+        prereq: 'اجتياز مقررات (ر132 + ر110 + س101) والحصول على تقدير جيد في اثنين منهم على الأقل.',
+        study: 'هندسة وتطوير البرمجيات، هياكل البيانات والخوارزميات المتقدمة، تصميم وإدارة قواعد البيانات، أنظمة التشغيل، الذكاء الاصطناعي وتعلم الآلة، شبكات الحاسب وتأمين المعلومات، اللغات الصورية ونظريات الحوسبة.', 
+        career: 'مهندس برمجيات (Software Engineer)، مطور تطبيقات ومواقع، مهندس ذكاء اصطناعي، محلل بيانات ضخمة، متخصص أمن معلومات واختراق أخلاقي، مهندس بنية تحتية سحابية، استشارات التكنولوجيا.'
+    },
+    'd_chem': { 
+        title: 'كيمياء منفرد', 
+        prereq: 'اجتياز مقري (ك101 + ك102) بتقدير جيد على الأقل في كل منهما.',
+        study: 'الكيمياء العضوية المتقدمة والتخليقية، الكيمياء غير العضوية والتناسقية، الكيمياء الفيزيائية والديناميكا الحرارية وكيمياء الكم، الكيمياء التحليلية الدقيقة والتحليل الآلي الطيفي والكهربي، تكنولوجيا البوليمرات والبتروكيماويات.', 
+        career: 'مصانع الأدوية ومراكز الأبحاث الدوائية (R&D)، شركات البترول والصناعات البتروكيماوية، مراقبة وضمان الجودة (QA/QC)، معامل التحاليل الطبية والبيئية، مصانع الدهانات والبلاستيك والأسمدة والكيماويات المتخصصة.'
+    },
+    'd_geo': { 
+        title: 'جيولوجيا منفرد', 
+        prereq: 'اجتياز مقرري (ج101 + ج102) بتقدير جيد لكل مقرر + المعدل التراكمي العام لا يقل عن 1.5.',
+        study: 'علم الصخور الرسوبية والنارية والمتحولة، المعادن والبلورات المجهرية، الجيولوجيا التركيبية والتكتونية، الجيولوجيا التاريخية والطبقات والحفريات، جيولوجيا البترول والغاز والترسيب، المياه الجوفية والهندسية والبيئة.', 
+        career: 'شركات التنقيب عن البترول والغاز (Wellsite/Exploration Geologist)، شركات التعدين واستخراج الذهب والمعادن الاقتصادية، هيئة المساحة الجيولوجية ومراكز الاستشعار عن بعد، مشاريع الجيوتقنية والأنفاق والبنية التحتية.'
+    },
+    'd_ast': { 
+        title: 'علوم فضاء (فلك)', 
+        prereq: 'اجتياز (ر110 + ل111 + ل112) بتقدير جيد على الأقل في كل منهما (لا يقبل من يقل تراكميه عن 1.25).',
+        study: 'الميكانيكا السماوية وميكانيكا المدارات الفضائية، الفيزياء الفلكية النظرية والرصدية، فيزياء الشمس والرياح الشمسية، فيزياء الغلاف الجوي العلوي والأيونوسفير، النسبية العامة وعلم الكون (Cosmology)، اتصالات وتتبع الأقمار الصناعية.', 
+        career: 'وكالات ومراكز أبحاث الفضاء، مراصد الفلك ومحطات الرصد، هيئة الأرصاد الجوية ومراكز التنبؤ المناخي، شركات تكنولوجيا الأقمار الصناعية والملاحة، التدريس الأكاديمي والبحث العلمي الدولي.'
+    },
+    'd_biop': { 
+        title: 'بايوفيزياء منفرد', 
+        prereq: 'اجتياز مقرري (بف111 + بف112) بتقدير جيد + اجتياز مقرري (ح101 + ح102) + المعدل التراكمي لا يقل عن 2.00.',
+        study: 'الفيزياء الحيوية الإشعاعية والطبية، فيزياء الأغشية الخلوية والجهاز العصبي، فيزياء وتكنولوجيا التصوير الطبي (MRI, CT, Ultrasound)، المحاكاة البيوفيزيائية وتخطيط العلاج الإشعاعي للأورام، الميكانيكا الحيوية والتقنية الحيوية النانوية.', 
+        career: 'أخصائي فيزياء طبية في مستشفيات ومراكز علاج الأورام، صيانة وتطوير الأجهزة الطبية في الشركات العالمية، مراكز الأبحاث الحيوية والطبية، الرقابة الإشعاعية وهيئات الأمان النووي.'
+    },
+    'd_geop': { 
+        title: 'جيوفيزياء منفرد', 
+        prereq: 'اجتياز مقرري (جف101 + جف102) بتقدير جيد + (ج101 + ج102) بتقدير جيد + التراكمي العام لا يقل عن 1.5.',
+        study: 'علم الزلازل واستكشاف الأعماق السيزمي (Seismic Methods)، الطرق الكهربية والكهرومغناطيسية والتثاقلية والمغناطيسية، معالجة وتحليل الإشارات والبيانات الجيوفيزيائية، تسجيلات الآبار البترولية (Well Logging)، الجيوفيزياء البيئية والهندسية.', 
+        career: 'شركات البترول والغاز الطبيعي العالمية والمحلية، شركات الخدمات البترولية (مثل Schlumberger وHalliburton)، مراكز رصد الزلازل والمخاطر الطبيعية، استكشاف خزانات المياه الجوفية والتعدين العميق.'
+    },
+    'd_phys': { 
+        title: 'فيزياء منفرد', 
+        prereq: 'اجتياز (ف101 + ف102 + ر132) بمتوسط نقاط ف101 و ف102 لا يقل عن 2 + المعدل التراكمي العام للمستوى الأول لا يقل عن 2.',
+        study: 'ميكانيكا الكم المتقدمة، الكهرومغناطيسية النظرية، الفيزياء النووية وفيزياء الجسيمات الأولية، فيزياء الجوامد والحالة المكثفة، الليزر والبصريات غير الخطية، الإلكترونيات الرقمية والتناظرية، الفيزياء الإحصائية والديناميكا الحرارية.', 
+        career: 'مراكز البحوث النووية والطاقة الذرية، مصانع أشباه الموصلات والإلكترونيات، شركات تكنولوجيا الليزر والألياف الضوئية، الطاقة المتجددة ومحطات الطاقة، القياس والمعايرة الصناعية، التدريس الأكاديمي.'
+    },
+    'd_math_stat': { 
+        title: 'رياضيات / إحصاء', 
+        prereq: 'اجتياز مقررات (ر132 + ر110 + ص100) والحصول على تقدير جيد في مقرر واحد على الأقل.',
+        study: 'الاحتمالات الرياضية المتقدمة، الاستدلال الإحصائي والاختبارات المعلمية واللامعلمية، نظرية الانحدار والسلاسل الزمنية، العمليات العشوائية، ضبط الجودة الإحصائي، الحزم الإحصائية البرمجية المتخصصة.', 
+        career: 'عالم ومحلل بيانات (Data Scientist / Analyst)، أخصائي اكتواري في كبرى شركات التأمين، إدارة بحوث العمليات في البنوك والبورصة، الجهاز المركزي للتعبئة العامة والإحصاء، مراكز بحوث السوق واستطلاعات الرأي.'
+    },
+    'd_math_cs': { 
+        title: 'رياضيات / علوم حاسب', 
+        prereq: 'اجتياز مقررات (ر132 + ر110 + س101) والحصول على تقدير جيد على الأقل في مقرر واحد منهم.',
+        study: 'الدمج المتكامل بين النظريات الرياضية والبرمجية: التشفير وأمن المعلومات الرياضي، الخوارزميات المعقدة والتحليل العددي، الذكاء الاصطناعي والتعلم العميق، الرسوميات الحاسوبية ونظم المحاكاة، قواعد البيانات الموزعة.', 
+        career: 'مهندس خوارزميات وذكاء اصطناعي، متخصص أمن سيبراني وتشفير، مطور محركات المحاكاة والألعاب، محلل كمي بالأسواق المالية (Quantitative Analyst)، تطوير النظم المعقدة والبرمجيات العلمية.'
+    },
+    'd_math_phys': { 
+        title: 'رياضيات / فيزياء', 
+        prereq: 'اجتياز (ر131 + ف101 + ف102) على ألا يقل التراكمي العام عن (1).',
+        study: 'الفيزياء الرياضية، ميكانيكا الكم النسبية، نظرية المجالات الكهرومغناطيسية، ميكانيكا الأوساط المتصلة وديناميكا الموائع الحسابية، النسبية العامة، الطرق الرياضية المتقدمة في النظم الفيزيائية.', 
+        career: 'البحث العلمي في الفيزياء النظرية، مراكز النمذجة والمحاكاة الحسابية، قطاع الطاقة المتقدمة والفضاء، هندسة النظم المعقدة، السلك الأكاديمي والجامعات الدولية.'
+    },
+    'd_phys_ast': { 
+        title: 'فيزياء / فلك', 
+        prereq: 'اجتياز مقرري (ل111 + ل112) بتقدير جيد على الأقل، واجتياز (ف101 + ف102 + ر131). شرط تفضيل: المعدل التراكمي العام لا يقل عن (1).',
+        study: 'الفيزياء الفلكية النووية، الأطياف الفلكية وتحليل الضوء النجمي، تركيب وتطور النجوم، الأجسام الفلكية الكثيفة (الثقوب السوداء والنجوم النيوترونية)، فيزياء البلازما الفضائية، علم الفلك الراديوي.', 
+        career: 'المراصد والمراكز الفلكية الدولية، محطات الرصد الفضائي والمناخي، مراكز الفيزياء الفلكية، تدريس العلوم المتخصصة، فرق البرمجة ومعالجة صور الأقمار الصناعية.'
+    },
+    'd_phys_atm': { 
+        title: 'فيزياء / علوم جوية', 
+        prereq: 'اجتياز مقرر (ل112) بتقدير جيد، واجتياز (ف101 + ف102 + ر131). شرط تفضيل: المعدل التراكمي العام لا يقل عن (1).',
+        study: 'ديناميكا الغلاف الجوي والديناميكا الحرارية الجوية، التنبؤات الجوية العددية ونماذج الطقس، كيمياء الغلاف الجوي وتلوث الهواء، الأرصاد الجوية الساتلية والرادارية، المناخ الفيزيائي والتغيرات المناخية العالمية.', 
+        career: 'الهيئة العامة للأرصاد الجوية، المطارات وشركات الملاحة الجوية والبحرية، وزارات البيئة ومراكز مراقبة التلوث، الهيئات الزراعية ومراكز أبحاث التغير المناخي والبيئة.'
+    },
+    'd_chem_phys': { 
+        title: 'كيمياء / فيزياء', 
+        prereq: 'اجتياز مقرري (ك101 + ك102) واجتياز (ف101 + ف102 + ر131). شرط تفضيل: التراكمي العام لا يقل عن (1).',
+        study: 'كيمياء الكم والأطياف الجزيئية المتقدمة، كيمياء وفيزياء الجوامد، التآكل والتحكم في خواص السطوح، كيمياء وفيزياء المواد النانوية والمكثفات، التحليل الحراري والكهروكيميائي المتقدم، البوليمرات الموصلة.', 
+        career: 'صناعة الخلايا الشمسية والطاقة المتجددة، مصانع وتطوير الشرائح وأشباه الموصلات، صناعات الطلاء والحماية الكاثودية ومانعات التآكل، معامل الفحوصات الدقيقة والرقابة الجودة، معامل أبحاث المواد.'
+    },
+    'd_chem_bio': { 
+        title: 'كيمياء / كيمياء حيوي', 
+        prereq: 'اجتياز مقرري (ك101 + ك102) بتقدير جيد على الأقل في كل منهما.',
+        study: 'كيمياء الإنزيمات والبروتينات والأحماض النووية، المسارات الأيضية واضطرابات التمثيل الغذائي، البيولوجيا الجزيئية والهندسة الوراثية، الهرمونات وسوائل الجسم، الكيمياء الإكلينيكية والتشخيصية، تصميم الأدوية وعلم السموم.', 
+        career: 'إدارة وتأسيس معامل التحاليل الطبية (بعد استيفاء التراخيص)، مصانع الأدوية ومراكز التكافؤ الحيوي، شركات ومراكز التكنولوجيا الحيوية وأطفال الأنابيب، الطب الشرعي والسموم، مراكز البحوث الطبية.'
+    },
+    'd_chem_bot': { 
+        title: 'كيمياء / نبات', 
+        prereq: 'اجتياز مقرري (ك101 + ك102) واجتياز مقررات (ن101 + ن102). الأفضلية للتراكمي العام الأكبر.',
+        study: 'فسيولوجيا النبات والكيمياء الحيوية النباتية، كيمياء النواتج الطبيعية واستخلاص المواد الفعالة، تصنيف وتشريح النبات، أمراض النبات والميكروبيولوجيا النباتية، التكنولوجيا الحيوية وزراعة الأنسجة، التنوع النباتي والبيئة.', 
+        career: 'شركات الصناعات الدوائية ومستحضرات التجميل العشبية، معامل استخلاص الزيوت العطرية والطبية، شركات الأسمدة والمبيدات الزراعية، معامل الرقابة على الصادرات والواردات الزراعية، مصانع الأغذية والتخمير.'
+    },
+    'd_chem_micro': { 
+        title: 'كيمياء / ميكروبيولوجي', 
+        prereq: 'اجتياز المقررات (ن101 + ن102) و (ك101 + ك102). الأفضلية طبقاً للمعدل التراكمي العام.',
+        study: 'علم البكتيريا والفطريات والفيروسات، فسيولوجيا الميكروبات، المناعة والأمصال، ميكروبيولوجيا الأغذية والألبان، الميكروبيولوجيا الصناعية والتخمرات الحيوية، المضادات الحيوية والمقاومة البكتيرية، التحاليل الميكروبيولوجية.', 
+        career: 'معامل التحاليل الطبية والتشخيص الميكروبي، مصانع الأدوية والمطهرات، مصانع الأغذية والمشروبات (قسم الجودة والسلامة الميكروبية)، محطات معالجة مياه الشرب والصرف الصناعي، مراكز الأمصال واللقاحات.'
+    },
+    'd_chem_zoo': { 
+        title: 'كيمياء / حيوان', 
+        prereq: 'اجتياز مقرري (ك101 + ك102) واجتياز مقرري (ح101 + ح102).',
+        study: 'علم وظائف الأعضاء المقارن (Physiology)، تشريح الفقاريات والأجنة، علم الأنسجة وكيمياء الأنسجة (Histochemistry)، المناعة وعلم الطفيليات الطبية، البيولوجيا الجزيئية والخلية، الكيمياء العضوية والتحليلية.', 
+        career: 'معامل التحاليل الطبية ومختبرات بنوك الدم، مراكز أبحاث وتطوير الأدوية وتجارب الأمان الدوائي، وحدات التخصيب المعملي والحقن المجهري، معامل الهيئات البيطرية والمصايد، الأدلة الجنائية والبحث الجنائي.'
+    },
+    'd_chem_geo': { 
+        title: 'كيمياء / جيولوجيا', 
+        prereq: 'اجتياز مقرري (ك101 + ك102) واجتياز مقرري (ج101 + ج102). المعدل التراكمي العام لا يقل عن 1.00.',
+        study: 'الجيوكيمياء العامة والتطبيقية (Geochemistry)، كيمياء البترول والغاز الطبيعي، جيوكيمياء الخامات المعدنية والرواسب الاقتصادية، التحليل الآلي للصخور والمعادن، جيولوجيا وخزانات المياه، المعالجة البيئية للمخلفات التعدينية.', 
+        career: 'شركات البترول والتعدين كأخصائي جيوكيمياء، معامل تحليل الصخور ومعادن الذهب والفلزات، الهيئة المصرية العامة للثروة المعدنية، مراكز الاستشارات البيئية واستكشاف الموارد، مصانع الأسمنت والحراريات.'
+    },
+    'd_chem_ent': { 
+        title: 'كيمياء / حشرات', 
+        prereq: 'اجتياز مقرري (ك101 + ك102) واجتياز مقرري (ش101 + ش102).',
+        study: 'فسيولوجيا وتشريح الحشرات، كيمياء وتصنيع المبيدات الحشرية وسميتها، الحشرات الطبية والبيطرية وناقلات الأمراض، المكافحة المتكاملة للآفات الحشرية، كيمياء الفيرومونات وسلوك الحشرات، الحشرات الجنائية (Forensic Entomology).', 
+        career: 'شركات ومصانع تصنيع المبيدات والكيماويات الزراعية، الإدارة المركزية لمكافحة الآفات والحجر الزراعي، مراكز مكافحة نواقل الأمراض والملاريا بوزارة الصحة، الأدلة الجنائية وتحديد توقيت الوفاة، شركات الصحة العامة والبيئة.'
+    }
+};
+
+let isDragging = false;
+let draggedNode = null;
+let offset = { x: 0, y: 0 };
+let selectedNodes = new Set();
+let forceSelectedFromDept = new Set();
+let currentActiveDeptId = null;
+
+let dragTimer = null;
+let startX = 0, startY = 0;
+
+function showSkillTree() {
+    switchView('skill-tree-view');
+    const scrollContainer = document.getElementById('tree-scroll-container');
+    if(scrollContainer) {
+        scrollContainer.scrollLeft = 1100;
+        scrollContainer.scrollTop = 350;
+    }
+    if (document.getElementById('tree-nodes-container').innerHTML === '') {
+        initTreeLayout();
+    }
+}
+
+// بناء العناصر وتوزيعها
+function initTreeLayout() {
+    const container = document.getElementById('tree-nodes-container');
+    container.innerHTML = '';
+
+    let cols = {
+        't1': { x: 2400, y: 120, step: 90 },       
+        't2': { x: 1850, y: 120, step: 90 },       
+        'dept_d': { x: 1050, y: 120, step: 90 },   
+        'dept_s': { x: 300, y: 220, step: 110 }    
+    };
+
+    treeItems.forEach(item => {
+        const col = cols[item.type];
+        const node = document.createElement('div');
+        node.className = `tree-node-drag w-[230px] p-3 rounded-2xl flex items-center gap-3 shadow-lg inactive`;
+        node.id = `node-${item.id}`;
+        node.style.borderColor = '#334155';
+        node.style.left = `${col.x}px`;
+        node.style.top = `${col.y}px`;
+        
+        node.innerHTML = `
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: ${item.color}20; border: 1px solid ${item.color}50;">
+                <i class="fas ${item.icon} text-lg" style="color: ${item.color};"></i>
+            </div>
+            <div class="truncate text-right w-full pr-2">
+                <h4 class="text-white font-bold text-[13px] select-none truncate w-full block">${item.title}</h4>
+                <span class="text-[10px] text-gray-400 font-mono">${item.type.includes('dept') ? 'تخصص علمي' : (item.type === 't1' ? 'ترم أول' : 'ترم ثانٍ')}</span>
+            </div>
+            <div class="absolute -top-2 -right-2 w-5 h-5 bg-cuGreen-500 rounded-full border-2 border-dark-900 hidden check-icon shadow-md"><i class="fas fa-check text-[10px] text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i></div>
+            
+            <!-- الصندوق اللي هيطلع تحت القسم أو المادة -->
+            <div class="info-panel absolute top-[115%] left-1/2 transform -translate-x-1/2 bg-dark-900/95 border border-[${item.color}] p-5 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-all duration-300 opacity-0 pointer-events-none z-[100] w-80 backdrop-blur-xl scale-95 origin-top">
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-dark-900 border-t border-l border-[${item.color}] rotate-45"></div>
+                <div class="panel-content"></div>
+            </div>
+        `;
+
+        node.addEventListener('mousedown', handlePointerDown);
+        node.addEventListener('touchstart', handlePointerDown, {passive: false});
+
+        container.appendChild(node);
+        col.y += col.step;
+    });
+
+    // مستمع نقر للخلفية لإلغاء التحديد
+    const workspace = document.getElementById('tree-workspace');
+    workspace.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.tree-node-drag') && !e.target.closest('.info-panel')) {
+            clearAllSelections();
+        }
+    });
+
+    drawLines();
+}
+
+function clearAllSelections() {
+    selectedNodes.clear();
+    forceSelectedFromDept.clear();
+    currentActiveDeptId = null;
+    updateTreeState();
+}
+
+function resetTreeLayout() {
+    clearAllSelections();
+    initTreeLayout();
+}
+
+// رسم كل الخطوط كـ SVG مع إخفائها افتراضياً
+function drawLines() {
+    const svg = document.getElementById('tree-lines-container');
+    let svgHtml = '';
+
+    for (const [deptId, reqs] of Object.entries(deptRequirements)) {
+        reqs.req.forEach(subjId => {
+            const el1 = document.getElementById(`node-${subjId}`);
+            const el2 = document.getElementById(`node-${deptId}`);
+            
+            if (el1 && el2) {
+                const x1 = parseFloat(el1.style.left);
+                const y1 = parseFloat(el1.style.top) + 32; 
+                const x2 = parseFloat(el2.style.left) + 230; 
+                const y2 = parseFloat(el2.style.top) + 32;
+
+                const curveOffset = Math.abs(x1 - x2) / 2;
+                const d = `M ${x1} ${y1} C ${x1 - curveOffset} ${y1}, ${x2 + curveOffset} ${y2}, ${x2} ${y2}`;
+                
+                const color = treeItems.find(i => i.id === deptId).color;
+                svgHtml += `<path id="path-${subjId}-${deptId}" d="${d}" class="tree-line-svg" stroke="${color}" style="color:${color}"></path>`;
+            }
+        });
+    }
+    svg.innerHTML = svgHtml;
+    updateDynamicLines();
+}
+
+// نظام السحب والضغط المطول (Long Press to Drag)
+function handlePointerDown(e) {
+    if (!e.target.closest('.tree-node-drag')) return;
+    const node = e.target.closest('.tree-node-drag');
+    draggedNode = node;
+    
+    let clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+    let clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+    
+    startX = clientX;
+    startY = clientY;
+    
+    offset.x = clientX - parseFloat(node.style.left);
+    offset.y = clientY - parseFloat(node.style.top);
+    
+    isDragging = false;
+    
+    dragTimer = setTimeout(() => {
+        isDragging = true;
+        node.classList.add('dragging-active');
+    }, 250);
+
+    document.addEventListener('mousemove', handlePointerMove);
+    document.addEventListener('touchmove', handlePointerMove, {passive: false});
+    document.addEventListener('mouseup', handlePointerUp);
+    document.addEventListener('touchend', handlePointerUp);
+}
+
+function handlePointerMove(e) {
+    if (!draggedNode) return;
+
+    let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+    if (!isDragging) {
+        if (Math.abs(clientX - startX) > 10 || Math.abs(clientY - startY) > 10) {
+            clearTimeout(dragTimer);
+        }
+        return;
+    }
+
+    if (e.cancelable) e.preventDefault();
+
+    draggedNode.style.left = `${clientX - offset.x}px`;
+    draggedNode.style.top = `${clientY - offset.y}px`;
+
+    updateDynamicLines();
+}
+
+function handlePointerUp(e) {
+    clearTimeout(dragTimer);
+    
+    if (draggedNode) {
+        draggedNode.classList.remove('dragging-active');
+        if (!isDragging) {
+            let id = draggedNode.id.replace('node-', '');
+            toggleNodeSelection(id);
+        }
+    }
+    
+    isDragging = false;
+    draggedNode = null;
+    
+    document.removeEventListener('mousemove', handlePointerMove);
+    document.removeEventListener('touchmove', handlePointerMove);
+    document.removeEventListener('mouseup', handlePointerUp);
+    document.removeEventListener('touchend', handlePointerUp);
+}
+
+// تحديث إحداثيات الخطوط المحددة فقط
+function updateDynamicLines() {
+    for (const [deptId, reqs] of Object.entries(deptRequirements)) {
+        reqs.req.forEach(subjId => {
+            const el1 = document.getElementById(`node-${subjId}`);
+            const el2 = document.getElementById(`node-${deptId}`);
+            const path = document.getElementById(`path-${subjId}-${deptId}`);
+            
+            if (el1 && el2 && path && path.classList.contains('active-line')) {
+                const x1 = parseFloat(el1.style.left);
+                const y1 = parseFloat(el1.style.top) + 32; 
+                const x2 = parseFloat(el2.style.left) + 230; 
+                const y2 = parseFloat(el2.style.top) + 32;
+
+                const curveOffset = Math.abs(x1 - x2) / 2;
+                const d = `M ${x1} ${y1} C ${x1 - curveOffset} ${y1}, ${x2 + curveOffset} ${y2}, ${x2} ${y2}`;
+                path.setAttribute('d', d);
+            }
+        });
+    }
+}
+
+// المحرك التفاعلي للمنطق والـ UI
+function toggleNodeSelection(nodeId) {
+    const item = treeItems.find(i => i.id === nodeId);
+    
+    // إخفاء كل اللوحات
+    document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('show-panel'));
+
+    if (item.type.includes('dept')) {
+        // إذا ضغط على قسم
+        if (currentActiveDeptId === nodeId) {
+            clearAllSelections(); // الدوسة التانية تقفل
+            return;
+        }
+        currentActiveDeptId = nodeId;
+        selectedNodes.clear();
+        forceSelectedFromDept.clear();
+        
+        if (deptRequirements[nodeId]) {
+            deptRequirements[nodeId].req.forEach(reqId => forceSelectedFromDept.add(reqId));
+        }
+        forceSelectedFromDept.add(nodeId);
+    } else {
+        // إذا ضغط على مادة
+        currentActiveDeptId = null;
+        forceSelectedFromDept.clear();
+        
+        if (selectedNodes.has(nodeId)) {
+            selectedNodes.delete(nodeId);
+        } else {
+            selectedNodes.add(nodeId);
+        }
+    }
+    
+    updateTreeState();
+}
+
+function updateTreeState() {
+    const allNodes = document.querySelectorAll('.tree-node-drag');
+    const allPaths = document.querySelectorAll('.tree-line-svg');
+
+    // إخفاء جميع اللوحات أولاً لضمان إغلاقها وعدم تعليقها عند النقر على الخلفية
+    document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('show-panel'));
+
+    // 1. تصفير كل شيء (الكل باهت والخطوط مخفية)
+    allNodes.forEach(node => {
+        node.classList.remove('highlight');
+        node.classList.add('inactive');
+        node.style.borderColor = '#334155';
+        node.style.boxShadow = 'none';
+        node.querySelector('.check-icon').classList.add('hidden');
+    });
+    
+    allPaths.forEach(path => {
+        path.classList.remove('active-line');
+        path.style.opacity = '0';
+    });
+
+    const activeSet = forceSelectedFromDept.size > 0 ? forceSelectedFromDept : selectedNodes;
+
+    // لو مفيش أي تحديد
+    if (activeSet.size === 0) {
+        allNodes.forEach(node => node.classList.remove('inactive'));
+        return;
+    }
+
+    // 2. تنوير العقد النشطة
+    activeSet.forEach(id => {
+        const node = document.getElementById(`node-${id}`);
+        const item = treeItems.find(i => i.id === id);
+        if (node) {
+            node.classList.remove('inactive');
+            node.classList.add('highlight');
+            node.style.borderColor = item.color;
+            node.style.boxShadow = `0 0 20px ${item.color}70`;
+            if(!item.type.includes('dept')) node.querySelector('.check-icon').classList.remove('hidden');
+        }
+    });
+
+    // 3. حالة 1: الطالب يختار قسم لعرض تفاصيله
+    if (currentActiveDeptId) {
+        const deptData = deptInfoData[currentActiveDeptId];
+        const deptItem = treeItems.find(i => i.id === currentActiveDeptId);
+        const deptNode = document.getElementById(`node-${currentActiveDeptId}`);
+        
+        // رسم الخطوط التي تؤدي لهذا القسم فقط
+        if (deptRequirements[currentActiveDeptId]) {
+            deptRequirements[currentActiveDeptId].req.forEach(reqId => {
+                const path = document.getElementById(`path-${reqId}-${currentActiveDeptId}`);
+                if (path) {
+                    path.classList.add('active-line');
+                    path.style.opacity = '1';
+                }
+            });
+        }
+
+        // عرض تفاصيل القسم التفصيلية
+        if (deptNode && deptData) {
+            const panel = deptNode.querySelector('.info-panel');
+            const content = panel.querySelector('.panel-content');
+            content.innerHTML = `
+                <div class="text-right space-y-3 font-sans max-h-[65vh] overflow-y-auto custom-scrollbar p-2">
+                    <div class="flex items-center justify-between border-b border-gray-700 pb-2">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fas ${deptItem.icon}" style="color:${deptItem.color};"></i>
+                            <span>${deptData.title}</span>
+                        </h3>
+                        <span class="text-xs px-2.5 py-1 rounded-full font-mono font-bold" style="background-color:${deptItem.color}20; color:${deptItem.color}; border:1px solid ${deptItem.color}50;">تخصص معتمد</span>
+                    </div>
+                    <div>
+                        <h5 class="text-xs font-bold text-cuGold-400 mb-1 flex items-center gap-1.5"><i class="fas fa-check-double"></i> شروط القبول والالتحاق:</h5>
+                        <p class="text-gray-300 text-xs leading-relaxed bg-dark-900/60 p-2 rounded-lg border border-gray-700/60">${deptData.prereq}</p>
+                    </div>
+                    <div>
+                        <h5 class="text-xs font-bold text-blue-400 mb-1 flex items-center gap-1.5"><i class="fas fa-graduation-cap"></i> المقررات الأساسية بالقسم:</h5>
+                        <p class="text-gray-300 text-xs leading-relaxed bg-dark-900/60 p-2 rounded-lg border border-gray-700/60">${deptData.study}</p>
+                    </div>
+                    <div>
+                        <h5 class="text-xs font-bold text-cuGreen-400 mb-1 flex items-center gap-1.5"><i class="fas fa-briefcase"></i> مجالات العمل والخريجين:</h5>
+                        <p class="text-gray-300 text-xs leading-relaxed bg-dark-900/60 p-2 rounded-lg border border-gray-700/60">${deptData.career}</p>
+                    </div>
+                </div>
+            `;
+            panel.classList.add('show-panel');
+            updateDynamicLines();
+        }
+    } 
+    // حالة 2: الطالب بيحدد مواد يدوياً ويرى الأقسام المتاحة
+    else if (selectedNodes.size > 0) {
+        let openedDepts = [];
+        
+        for (const [deptId, reqs] of Object.entries(deptRequirements)) {
+            // القسم يفتح فقط لو *كل* متطلباته موجودة في التحديد
+            const isFullyUnlocked = reqs.req.every(reqId => selectedNodes.has(reqId));
+            
+            if (isFullyUnlocked) {
+                openedDepts.push(deptId);
+                const deptNode = document.getElementById(`node-${deptId}`);
+                const item = treeItems.find(i => i.id === deptId);
+                
+                if (deptNode) {
+                    deptNode.classList.remove('inactive');
+                    deptNode.classList.add('highlight');
+                    deptNode.style.borderColor = item.color;
+                    deptNode.style.boxShadow = `0 0 25px ${item.color}90`;
+                }
+
+                reqs.req.forEach(reqId => {
+                    const path = document.getElementById(`path-${reqId}-${deptId}`);
+                    if (path) {
+                        path.classList.add('active-line');
+                        path.style.opacity = '1';
+                    }
+                });
+            }
+        }
+
+        // إظهار لوحة النتيجة تحت آخر مادة تم تحديدها
+        const lastNodeId = Array.from(selectedNodes).pop();
+        const lastNode = document.getElementById(`node-${lastNodeId}`);
+        if (lastNode) {
+            const panel = lastNode.querySelector('.info-panel');
+            const content = panel.querySelector('.panel-content');
+            let deptNames = openedDepts.map(id => treeItems.find(i => i.id === id).title).join('<br> • ');
+            
+            content.innerHTML = `
+                <div class="text-center p-1">
+                    <p class="text-xs text-gray-300 mb-2 border-b border-gray-700 pb-2">حددت <strong class="text-cuGold-400">${selectedNodes.size}</strong> مقررات دراسية.</p>
+                    ${openedDepts.length > 0 ? `
+                        <div class="bg-green-900/20 border border-green-500/40 p-2 rounded-lg text-right">
+                            <p class="text-[11px] text-cuGreen-400 font-bold mb-1"><i class="fas fa-unlock"></i> تهانينا! فتحت لك الأقسام التالية:</p>
+                            <p class="text-[11px] text-white leading-relaxed font-bold"> • ${deptNames}</p>
+                        </div>
+                    ` : `
+                        <p class="text-[11px] text-yellow-400 bg-yellow-900/20 border border-yellow-500/30 p-2 rounded-lg">المواد المختارة لا تكفي لفتح قسم بمفردها، استمر في اختيار المواد المشتركة!</p>
+                    `}
+                </div>
+            `;
+            panel.classList.add('show-panel');
+            updateDynamicLines();
+        }
+    }
+}
+
+window.addEventListener('resize', () => {
+    if (!document.getElementById('skill-tree-view').classList.contains('hidden')) {
+        drawLines();
+    }
+});
+
     </script>
 </body>
 </html>
