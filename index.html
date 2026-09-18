@@ -224,28 +224,9 @@
             position: relative;
             width: 3200px;
             height: 2200px;
-            background-color: #050810;
-            background-image: 
-                linear-gradient(to right, rgba(168, 85, 247, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
-            background-size: 60px 60px;
-        }
-        
-        #tree-workspace::before {
-            content: '';
-            position: absolute;
-            top: 20%; left: 30%; width: 1000px; height: 1000px;
-            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 60%);
-            filter: blur(50px);
-            pointer-events: none; z-index: 0;
-        }
-        #tree-workspace::after {
-            content: '';
-            position: absolute;
-            bottom: 20%; right: 20%; width: 1200px; height: 1200px;
-            background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 60%);
-            filter: blur(60px);
-            pointer-events: none; z-index: 0;
+            background-color: #0f172a;
+            background-image: radial-gradient(rgba(34, 197, 94, 0.15) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         .tree-node-drag {
@@ -253,9 +234,9 @@
             cursor: pointer;
             user-select: none;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, opacity 0.3s ease, border-color 0.25s ease;
-            background: rgba(15, 23, 42, 0.92);
-            border: 2px solid #334155;
-            backdrop-filter: blur(14px);
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
             z-index: 10;
         }
         /* كلاس التفعيل بعد الضغط المطول */
@@ -6693,8 +6674,8 @@ function initTreeLayout() {
         node.style.top = `${col.y}px`;
         
         node.innerHTML = `
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: ${item.color}20; border: 1px solid ${item.color}50;">
-                <i class="fas ${item.icon} text-lg" style="color: ${item.color};"></i>
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-dark-900 border border-gray-600 transition-colors duration-300" id="icon-box-${item.id}">
+                <i class="fas ${item.icon} text-xl text-gray-400 transition-colors duration-300" id="icon-${item.id}"></i>
             </div>
             <div class="truncate text-right w-full pr-2">
                 <h4 class="text-white font-bold text-[13px] select-none truncate w-full block">${item.title}</h4>
@@ -6908,6 +6889,10 @@ function updateTreeState() {
         node.style.borderColor = '#334155';
         node.style.boxShadow = 'none';
         node.querySelector('.check-icon').classList.add('hidden');
+        const iconBox = node.querySelector('div[id^="icon-box-"]');
+        const icon = node.querySelector('i[id^="icon-"]');
+        if(iconBox) { iconBox.style.backgroundColor = ''; iconBox.style.borderColor = ''; }
+        if(icon) { icon.style.color = ''; icon.classList.add('text-gray-400'); }
     });
     
     allPaths.forEach(path => {
@@ -6933,6 +6918,11 @@ function updateTreeState() {
             node.style.borderColor = item.color;
             node.style.boxShadow = `0 0 20px ${item.color}70`;
             if(!item.type.includes('dept')) node.querySelector('.check-icon').classList.remove('hidden');
+            
+            const iconBox = document.getElementById(`icon-box-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            if(iconBox) { iconBox.style.backgroundColor = `${item.color}20`; iconBox.style.borderColor = `${item.color}50`; }
+            if(icon) { icon.style.color = item.color; icon.classList.remove('text-gray-400'); }
         }
     });
 
