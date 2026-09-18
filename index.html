@@ -17,6 +17,24 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<!-- OneSignal SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "ec9feab7-c2bc-447a-874d-fd98094ba24b",
+          notifyButton: {
+            enable: true, // عشان يظهر جرس أخضر شيك تحت للطلاب
+            colors: {
+                'circle.background': '#22c55e', 
+                'circle.foreground': 'white',
+            }
+          },
+        });
+      });
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -2572,6 +2590,11 @@ function handleUserUI(session) {
         // --- حالة: الطالب مسجل دخول ---
         currentUser = session.user;
         
+        // 🔔 ربط الطالب الحالي بنظام إشعارات OneSignal 🔔
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.login(currentUser.id);
+        });
+
         if(authBtn) authBtn.classList.add('hidden');
         if(avatarBtn) {
             avatarBtn.classList.remove('hidden');
@@ -2602,6 +2625,11 @@ function handleUserUI(session) {
         // --- حالة: الطالب زائر ---
         currentUser = null;
         
+        // 🔔 فك ارتباط الإشعارات لو الطالب عمل تسجيل خروج 🔔
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.logout();
+        });
+
         if(authBtn) authBtn.classList.remove('hidden');
         if(avatarBtn) avatarBtn.classList.add('hidden');
         if(sidebarLink) sidebarLink.classList.add('hidden');
